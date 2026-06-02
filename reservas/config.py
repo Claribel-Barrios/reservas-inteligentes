@@ -14,8 +14,8 @@ class Config:
     MAIL_SERVER = os.environ.get("MAIL_SERVER", "smtp.gmail.com")
     MAIL_PORT = int(os.environ.get("MAIL_PORT", 587))
     MAIL_USE_TLS = True
-    MAIL_USERNAME = os.environ.get("MAIL_USERNAME", "noreply@reservas.com")
-    MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD", "")
+    MAIL_USERNAME = "reservasinteligentes9@gmail.com"
+    MAIL_PASSWORD = "pbqq yjfy kroz kzxi"
     MAIL_DEFAULT_SENDER = ("Sistema de Reservas", os.environ.get("MAIL_USERNAME", "noreply@reservas.com"))
 
     # Session
