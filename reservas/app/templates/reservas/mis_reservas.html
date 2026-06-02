@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Mis Reservas{% endblock %}
+{% block content %}
+<div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+    <div>
+        <h1>Mis Reservas</h1>
+        <p>Historial y estado de todas tus reservas</p>
+    </div>
+    <a href="{{ url_for('main.servicios') }}" class="btn btn-primary">+ Nueva reserva</a>
+</div>
+
+{% if reservas %}
+<div class="table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Servicio</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for r in reservas %}
+        <tr>
+            <td><code style="color:var(--accent);">{{ r.codigo }}</code></td>
+            <td><strong>{{ r.horario.servicio.nombre }}</strong></td>
+            <td>{{ r.horario.fecha.strftime('%d/%m/%Y') }}</td>
+            <td>{{ r.horario.hora_inicio.strftime('%H:%M') }} - {{ r.horario.hora_fin.strftime('%H:%M') }}</td>
+            <td>
+                {% if r.estado == 'confirmada' %}
+                    <span class="badge badge-success">✅ Confirmada</span>
+                {% elif r.estado == 'cancelada' %}
+                    <span class="badge badge-danger">❌ Cancelada</span>
+                {% elif r.estado == 'completada' %}
+                    <span class="badge badge-info">✔ Completada</span>
+                {% else %}
+                    <span class="badge badge-warning">{{ r.estado }}</span>
+                {% endif %}
+            </td>
+            <td style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;">
+                <a href="{{ url_for('reservas.detalle', reserva_id=r.id) }}" class="btn btn-outline btn-sm">Ver</a>
+                {% if r.estado == 'confirmada' %}
+                <button onclick="confirmarCancelar({{ r.id }})" class="btn btn-danger btn-sm">Cancelar</button>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal cancelar -->
+<div id="modal-cancelar" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center;">
+    <div class="card" style="max-width:400px;width:90%;">
+        <h3 style="margin-bottom:1rem;">Cancelar reserva</h3>
+        <p style="color:var(--muted);font-size:.9rem;margin-bottom:1.25rem;">¿Estás seguro que deseas cancelar esta reserva?</p>
+        <form id="form-cancelar" method="POST">
+            <div class="form-group">
+                <label class="form-label">Motivo (opcional)</label>
+                <textarea name="motivo" class="form-control" placeholder="Indica el motivo de la cancelación..."></textarea>
+            </div>
+            <div style="display:flex;gap:.75rem;justify-content:flex-end;margin-top:1rem;">
+                <button type="button" onclick="cerrarModal()" class="btn btn-outline">No, volver</button>
+                <button type="submit" class="btn btn-danger">Sí, cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% else %}
+<div class="card" style="text-align:center;padding:4rem 2rem;">
+    <div style="font-size:3.5rem;margin-bottom:1rem;">📅</div>
+    <h3 style="margin-bottom:.5rem;">Sin reservas aún</h3>
+    <p style="color:var(--muted);margin-bottom:1.5rem;">Explora nuestros servicios y haz tu primera reserva.</p>
+    <a href="{{ url_for('main.servicios') }}" class="btn btn-primary">Ver servicios disponibles</a>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+function confirmarCancelar(id) {
+    document.getElementById('form-cancelar').action = `/reservas/cancelar/${id}`;
+    const modal = document.getElementById('modal-cancelar');
+    modal.style.display = 'flex';
+}
+function cerrarModal() {
+    document.getElementById('modal-cancelar').style.display = 'none';
+}
+document.getElementById('modal-cancelar').addEventListener('click', function(e){
+    if (e.target === this) cerrarModal();
+});
+</script>
+{% endblock %}

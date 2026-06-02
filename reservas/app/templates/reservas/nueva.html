@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Reservar - {{ servicio.nombre }}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>
+        {% if servicio.categoria == 'Salud' %}🏥 {% elif servicio.categoria == 'Deportes' %}⚽ {% elif servicio.categoria == 'Educación' %}📚 {% elif servicio.categoria == 'Espacios' %}🏢 {% else %}📋 {% endif %}
+        {{ servicio.nombre }}
+    </h1>
+    <p>Selecciona un horario disponible para tu reserva</p>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 320px;gap:2rem;align-items:start;" class="reserva-layout">
+    <!-- HORARIOS -->
+    <div>
+        {% if horarios %}
+        {% set fecha_actual = namespace(val='') %}
+        {% for h in horarios %}
+            {% if h.fecha.strftime('%Y-%m-%d') != fecha_actual.val %}
+                {% set fecha_actual.val = h.fecha.strftime('%Y-%m-%d') %}
+                <div style="font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:1.5rem 0 .75rem;{% if loop.first %}margin-top:0;{% endif %}">
+                    📅 {{ h.fecha.strftime('%A %d de %B de %Y') }}
+                </div>
+            {% endif %}
+            <a href="{{ url_for('reservas.confirmar', horario_id=h.id) }}" style="text-decoration:none;">
+                <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.25rem;margin-bottom:.6rem;display:flex;align-items:center;justify-content:space-between;transition:all .2s;cursor:pointer;" 
+                     onmouseenter="this.style.borderColor='rgba(59,130,246,.5)';this.style.background='var(--surface2)'"
+                     onmouseleave="this.style.borderColor='var(--border)';this.style.background='var(--card)'">
+                    <div>
+                        <div style="font-weight:700;font-size:1.05rem;">
+                            ⏰ {{ h.hora_inicio.strftime('%H:%M') }} — {{ h.hora_fin.strftime('%H:%M') }}
+                        </div>
+                        {% if h.responsable %}
+                        <div style="color:var(--muted);font-size:.85rem;margin-top:.2rem;">👤 {{ h.responsable }}</div>
+                        {% endif %}
+                    </div>
+                    <div style="text-align:right;">
+                        <span class="badge badge-success">{{ h.cupos_disponibles }} cupo{% if h.cupos_disponibles != 1 %}s{% endif %}</span>
+                        <div style="color:var(--primary);font-size:.8rem;margin-top:.3rem;font-weight:600;">Reservar →</div>
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+        {% else %}
+        <div class="card" style="text-align:center;padding:3rem;">
+            <div style="font-size:3rem;margin-bottom:1rem;">😔</div>
+            <h3>Sin horarios disponibles</h3>
+            <p style="color:var(--muted);margin-top:.5rem;">No hay turnos disponibles para este servicio en este momento.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- INFO SERVICIO -->
+    <div class="card" style="position:sticky;top:84px;">
+        <h3 style="margin-bottom:1rem;font-size:1rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600;">Detalles del servicio</h3>
+        <div style="font-size:1.1rem;font-weight:700;margin-bottom:.5rem;">{{ servicio.nombre }}</div>
+        <p style="color:var(--muted);font-size:.875rem;line-height:1.6;margin-bottom:1.25rem;">{{ servicio.descripcion }}</p>
+        <div style="display:grid;gap:.5rem;">
+            <div style="display:flex;justify-content:space-between;font-size:.875rem;">
+                <span style="color:var(--muted);">⏱ Duración</span>
+                <span style="font-weight:600;">{{ servicio.duracion_minutos }} minutos</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:.875rem;">
+                <span style="color:var(--muted);">💰 Precio</span>
+                <span style="font-weight:600;">${{ "{:,.0f}".format(servicio.precio) }}</span>
+            </div>
+            {% if servicio.categoria %}
+            <div style="display:flex;justify-content:space-between;font-size:.875rem;">
+                <span style="color:var(--muted);">🏷 Categoría</span>
+                <span style="font-weight:600;">{{ servicio.categoria }}</span>
+            </div>
+            {% endif %}
+        </div>
+        <div style="margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--border);">
+            <a href="{{ url_for('main.servicios') }}" style="color:var(--muted);font-size:.875rem;text-decoration:none;">← Volver a servicios</a>
+        </div>
+    </div>
+</div>
+
+<style>
+@media (max-width:768px) {
+    .reserva-layout { grid-template-columns: 1fr !important; }
+}
+</style>
+{% endblock %}

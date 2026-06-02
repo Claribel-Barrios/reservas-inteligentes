@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Nuevo Horario{% endblock %}
+{% block content %}
+<div style="max-width:560px;">
+    <div class="page-header">
+        <h1>➕ Nuevo Horario</h1>
+    </div>
+    <div class="card">
+        <form method="POST">
+            <div class="form-group">
+                <label class="form-label">Servicio *</label>
+                <select name="servicio_id" class="form-control" required>
+                    <option value="">Selecciona un servicio</option>
+                    {% for s in servicios %}
+                    <option value="{{ s.id }}" {% if horario and horario.servicio_id == s.id %}selected{% endif %}>{{ s.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Fecha *</label>
+                <input type="date" name="fecha" class="form-control" required value="{{ horario.fecha if horario else '' }}">
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                <div class="form-group">
+                    <label class="form-label">Hora inicio *</label>
+                    <input type="time" name="hora_inicio" class="form-control" required value="{{ horario.hora_inicio.strftime('%H:%M') if horario else '' }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Hora fin *</label>
+                    <input type="time" name="hora_fin" class="form-control" required value="{{ horario.hora_fin.strftime('%H:%M') if horario else '' }}">
+                </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                <div class="form-group">
+                    <label class="form-label">Cupos totales</label>
+                    <input type="number" name="cupos_totales" class="form-control" value="{{ horario.cupos_totales if horario else 5 }}" min="1">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Responsable</label>
+                    <input type="text" name="responsable" class="form-control" placeholder="Nombre del responsable" value="{{ horario.responsable if horario else '' }}">
+                </div>
+            </div>
+            <div style="display:flex;gap:.75rem;margin-top:.5rem;">
+                <button type="submit" class="btn btn-primary">Crear horario</button>
+                <a href="{{ url_for('admin.horarios') }}" class="btn btn-outline">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

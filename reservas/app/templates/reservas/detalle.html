@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Reserva {{ reserva.codigo }}{% endblock %}
+{% block content %}
+<div style="max-width:560px;margin:0 auto;">
+    <div class="page-header">
+        <h1>Detalle de reserva</h1>
+    </div>
+
+    <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border);">
+            <div>
+                <code style="font-size:1.2rem;color:var(--accent);">{{ reserva.codigo }}</code>
+                <div style="color:var(--muted);font-size:.82rem;margin-top:.25rem;">Reservado el {{ reserva.fecha_reserva.strftime('%d/%m/%Y %H:%M') }}</div>
+            </div>
+            {% if reserva.estado == 'confirmada' %}
+                <span class="badge badge-success" style="font-size:.85rem;padding:.4rem 1rem;">✅ Confirmada</span>
+            {% elif reserva.estado == 'cancelada' %}
+                <span class="badge badge-danger" style="font-size:.85rem;padding:.4rem 1rem;">❌ Cancelada</span>
+            {% else %}
+                <span class="badge badge-info" style="font-size:.85rem;padding:.4rem 1rem;">{{ reserva.estado }}</span>
+            {% endif %}
+        </div>
+
+        <div style="display:grid;gap:.9rem;margin-bottom:1.5rem;">
+            <div style="display:flex;justify-content:space-between;font-size:.9rem;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.04);">
+                <span style="color:var(--muted);">Servicio</span>
+                <span style="font-weight:600;">{{ reserva.horario.servicio.nombre }}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:.9rem;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.04);">
+                <span style="color:var(--muted);">Fecha</span>
+                <span style="font-weight:600;">{{ reserva.horario.fecha.strftime('%d de %B de %Y') }}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:.9rem;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.04);">
+                <span style="color:var(--muted);">Hora</span>
+                <span style="font-weight:600;">{{ reserva.horario.hora_inicio.strftime('%H:%M') }} — {{ reserva.horario.hora_fin.strftime('%H:%M') }}</span>
+            </div>
+            {% if reserva.horario.responsable %}
+            <div style="display:flex;justify-content:space-between;font-size:.9rem;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.04);">
+                <span style="color:var(--muted);">Responsable</span>
+                <span style="font-weight:600;">{{ reserva.horario.responsable }}</span>
+            </div>
+            {% endif %}
+            <div style="display:flex;justify-content:space-between;font-size:.9rem;padding:.6rem 0;">
+                <span style="color:var(--muted);">Precio</span>
+                <span style="font-weight:600;">${{ "{:,.0f}".format(reserva.horario.servicio.precio) }}</span>
+            </div>
+        </div>
+
+        {% if reserva.notas %}
+        <div style="background:var(--surface2);border-radius:10px;padding:1rem;margin-bottom:1.25rem;">
+            <div style="font-size:.78rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Notas</div>
+            <p style="font-size:.9rem;">{{ reserva.notas }}</p>
+        </div>
+        {% endif %}
+
+        {% if reserva.estado == 'cancelada' and reserva.motivo_cancelacion %}
+        <div style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:1rem;margin-bottom:1.25rem;">
+            <div style="font-size:.78rem;font-weight:600;color:#f87171;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Motivo de cancelación</div>
+            <p style="font-size:.9rem;">{{ reserva.motivo_cancelacion }}</p>
+        </div>
+        {% endif %}
+
+        <div style="display:flex;gap:.75rem;">
+            <a href="{{ url_for('reservas.mis_reservas') }}" class="btn btn-outline">← Mis reservas</a>
+            {% if reserva.estado == 'confirmada' %}
+            <form method="POST" action="{{ url_for('reservas.cancelar', reserva_id=reserva.id) }}" style="display:inline;" onsubmit="return confirm('¿Seguro que deseas cancelar esta reserva?')">
+                <input type="hidden" name="motivo" value="Cancelado por el usuario">
+                <button type="submit" class="btn btn-danger">Cancelar reserva</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

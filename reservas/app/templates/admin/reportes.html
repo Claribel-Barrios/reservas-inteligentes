@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Reportes{% endblock %}
+{% block extra_css %}
+<style>
+.report-stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    text-align: center;
+}
+.report-stat .big { font-family: 'DM Serif Display', serif; font-size: 2.8rem; }
+.report-stat .lbl { color: var(--muted); font-size: .82rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; margin-top: .25rem; }
+
+.bar-chart { margin-top: 1.5rem; }
+.bar-row { display: flex; align-items: center; gap: 1rem; margin-bottom: .75rem; }
+.bar-label { width: 200px; font-size: .875rem; color: var(--text); flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bar-track { flex: 1; background: var(--surface2); border-radius: 6px; height: 28px; overflow: hidden; }
+.bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 6px; display: flex; align-items: center; padding: 0 .75rem; font-size: .8rem; font-weight: 700; color: #fff; transition: width .8s ease; min-width: 40px; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>📈 Reportes</h1>
+    <p>Estadísticas y métricas del sistema de reservas</p>
+</div>
+
+<div class="grid-4" style="margin-bottom:2rem;">
+    <div class="report-stat">
+        <div class="big">{{ stats.total_reservas }}</div>
+        <div class="lbl">Total reservas</div>
+    </div>
+    <div class="report-stat">
+        <div class="big" style="color:var(--success);">{{ stats.confirmadas }}</div>
+        <div class="lbl">Confirmadas</div>
+    </div>
+    <div class="report-stat">
+        <div class="big" style="color:var(--danger);">{{ stats.canceladas }}</div>
+        <div class="lbl">Canceladas</div>
+    </div>
+    <div class="report-stat">
+        <div class="big" style="color:var(--primary);">{{ stats.usuarios_activos }}</div>
+        <div class="lbl">Usuarios activos</div>
+    </div>
+</div>
+
+{% if stats.total_reservas > 0 %}
+<div class="card" style="margin-bottom:1.5rem;">
+    <h3 style="font-size:1rem;font-weight:700;margin-bottom:0;">Tasa de cancelación</h3>
+    {% set tasa = (stats.canceladas / stats.total_reservas * 100) | round(1) %}
+    <div style="margin-top:1.25rem;">
+        <div style="display:flex;justify-content:space-between;font-size:.875rem;color:var(--muted);margin-bottom:.5rem;">
+            <span>Confirmadas ({{ stats.confirmadas }})</span>
+            <span>Canceladas ({{ stats.canceladas }})</span>
+        </div>
+        <div style="height:12px;background:var(--surface2);border-radius:6px;overflow:hidden;">
+            <div style="height:100%;width:{{ 100 - tasa }}%;background:var(--success);border-radius:6px;display:inline-block;"></div>
+        </div>
+        <div style="text-align:right;font-size:.82rem;color:var(--muted);margin-top:.4rem;">{{ tasa }}% de cancelación</div>
+    </div>
+</div>
+{% endif %}
+
+{% if por_servicio %}
+<div class="card">
+    <h3 style="font-size:1rem;font-weight:700;">Reservas por servicio</h3>
+    {% set max_val = por_servicio | map(attribute=1) | max %}
+    <div class="bar-chart">
+        {% for nombre, total in por_servicio | sort(attribute=1, reverse=True) %}
+        <div class="bar-row">
+            <div class="bar-label" title="{{ nombre }}">{{ nombre }}</div>
+            <div class="bar-track">
+                <div class="bar-fill" style="width:{{ (total / max_val * 100) | round }}%">{{ total }}</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

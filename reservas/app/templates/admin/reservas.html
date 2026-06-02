@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Todas las Reservas{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>📋 Reservas</h1>
+    <p>Gestión completa de todas las reservas del sistema</p>
+</div>
+
+<div class="table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Usuario</th>
+                <th>Servicio</th>
+                <th>Fecha turno</th>
+                <th>Reservado el</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for r in reservas %}
+        <tr>
+            <td><code style="color:var(--accent);">{{ r.codigo }}</code></td>
+            <td>
+                <div style="font-weight:600;">{{ r.usuario.nombre }}</div>
+                <div style="color:var(--muted);font-size:.8rem;">{{ r.usuario.correo }}</div>
+            </td>
+            <td>{{ r.horario.servicio.nombre }}</td>
+            <td>{{ r.horario.fecha.strftime('%d/%m/%Y') }} <span style="color:var(--muted);">{{ r.horario.hora_inicio.strftime('%H:%M') }}</span></td>
+            <td style="color:var(--muted);font-size:.82rem;">{{ r.fecha_reserva.strftime('%d/%m/%Y %H:%M') }}</td>
+            <td>
+                {% if r.estado == 'confirmada' %}
+                    <span class="badge badge-success">✅ Confirmada</span>
+                {% elif r.estado == 'cancelada' %}
+                    <span class="badge badge-danger">❌ Cancelada</span>
+                {% elif r.estado == 'completada' %}
+                    <span class="badge badge-info">✔ Completada</span>
+                {% else %}
+                    <span class="badge badge-warning">{{ r.estado }}</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem;">No hay reservas.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

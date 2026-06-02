@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Mi Perfil{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Mi Perfil</h1>
+    <p>Actualiza tu información personal</p>
+</div>
+
+<div style="max-width:560px;">
+    <div class="card">
+        <div style="display:flex;align-items:center;gap:1rem;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);">
+            <div style="width:56px;height:56px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;">
+                {{ current_user.nombre[0].upper() }}
+            </div>
+            <div>
+                <div style="font-weight:700;font-size:1.1rem;">{{ current_user.nombre }}</div>
+                <div style="color:var(--muted);font-size:.875rem;">{{ current_user.correo }}</div>
+                <span class="badge badge-{% if current_user.is_admin %}danger{% else %}primary{% endif %}" style="margin-top:.3rem;">
+                    {{ current_user.rol | capitalize }}
+                </span>
+            </div>
+        </div>
+
+        <form method="POST">
+            <div class="form-group">
+                <label class="form-label">Nombre completo</label>
+                <input type="text" name="nombre" class="form-control" value="{{ current_user.nombre }}" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Teléfono</label>
+                <input type="tel" name="telefono" class="form-control" value="{{ current_user.telefono or '' }}">
+            </div>
+            <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border);margin-bottom:1rem;">
+                <p style="font-size:.85rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Cambiar contraseña (opcional)</p>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nueva contraseña</label>
+                <input type="password" name="nueva_password" class="form-control" placeholder="Dejar en blanco para no cambiar">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Confirmar contraseña</label>
+                <input type="password" name="confirmar_password" class="form-control" placeholder="Confirmar nueva contraseña">
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top:.5rem;">Guardar cambios</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

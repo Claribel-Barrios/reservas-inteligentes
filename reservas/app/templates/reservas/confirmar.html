@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Confirmar Reserva{% endblock %}
+{% block content %}
+<div style="max-width:560px;margin:0 auto;">
+    <div class="page-header">
+        <h1>Confirmar reserva</h1>
+        <p>Revisa los detalles antes de confirmar</p>
+    </div>
+
+    <div class="card" style="margin-bottom:1.25rem;">
+        <h3 style="font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:1.25rem;">Resumen de tu reserva</h3>
+
+        <div style="display:grid;gap:.9rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:.75rem;background:var(--surface2);border-radius:10px;">
+                <span style="color:var(--muted);font-size:.875rem;">🏷 Servicio</span>
+                <span style="font-weight:700;">{{ horario.servicio.nombre }}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:.75rem;background:var(--surface2);border-radius:10px;">
+                <span style="color:var(--muted);font-size:.875rem;">📅 Fecha</span>
+                <span style="font-weight:700;">{{ horario.fecha.strftime('%d de %B de %Y') }}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:.75rem;background:var(--surface2);border-radius:10px;">
+                <span style="color:var(--muted);font-size:.875rem;">⏰ Hora</span>
+                <span style="font-weight:700;">{{ horario.hora_inicio.strftime('%H:%M') }} — {{ horario.hora_fin.strftime('%H:%M') }}</span>
+            </div>
+            {% if horario.responsable %}
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:.75rem;background:var(--surface2);border-radius:10px;">
+                <span style="color:var(--muted);font-size:.875rem;">👤 Responsable</span>
+                <span style="font-weight:700;">{{ horario.responsable }}</span>
+            </div>
+            {% endif %}
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:.75rem;background:var(--surface2);border-radius:10px;">
+                <span style="color:var(--muted);font-size:.875rem;">💰 Precio</span>
+                <span style="font-weight:700;color:var(--success);">${{ "{:,.0f}".format(horario.servicio.precio) }}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:.75rem;background:var(--surface2);border-radius:10px;">
+                <span style="color:var(--muted);font-size:.875rem;">📊 Cupos disponibles</span>
+                <span class="badge badge-success">{{ horario.cupos_disponibles }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <form method="POST">
+            <div class="form-group">
+                <label class="form-label">Notas adicionales (opcional)</label>
+                <textarea name="notas" class="form-control" placeholder="¿Alguna indicación especial para tu reserva?"></textarea>
+            </div>
+            <div style="display:flex;gap:.75rem;flex-wrap:wrap;">
+                <button type="submit" class="btn btn-primary" style="flex:1;justify-content:center;padding:.8rem;">
+                    ✅ Confirmar reserva
+                </button>
+                <a href="{{ url_for('reservas.nueva', servicio_id=horario.servicio_id) }}" class="btn btn-outline">
+                    ← Volver
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

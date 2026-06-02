@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Gestión de Servicios{% endblock %}
+{% block content %}
+<div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+    <div>
+        <h1>🏷 Servicios</h1>
+        <p>Administra los servicios disponibles en el sistema</p>
+    </div>
+    <a href="{{ url_for('admin.servicio_nuevo') }}" class="btn btn-primary">+ Nuevo servicio</a>
+</div>
+
+<div class="table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Categoría</th>
+                <th>Duración</th>
+                <th>Precio</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for s in servicios %}
+        <tr>
+            <td style="color:var(--muted);">#{{ s.id }}</td>
+            <td><strong>{{ s.nombre }}</strong></td>
+            <td>{{ s.categoria or '—' }}</td>
+            <td>{{ s.duracion_minutos }} min</td>
+            <td>${{ "{:,.0f}".format(s.precio) }}</td>
+            <td>
+                {% if s.activo %}
+                    <span class="badge badge-success">Activo</span>
+                {% else %}
+                    <span class="badge badge-danger">Inactivo</span>
+                {% endif %}
+            </td>
+            <td style="display:flex;gap:.5rem;flex-wrap:wrap;">
+                <a href="{{ url_for('admin.servicio_editar', sid=s.id) }}" class="btn btn-outline btn-sm">Editar</a>
+                <form method="POST" action="{{ url_for('admin.servicio_eliminar', sid=s.id) }}" onsubmit="return confirm('¿Desactivar este servicio?')">
+                    <button class="btn btn-danger btn-sm">Desactivar</button>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" style="text-align:center;color:var(--muted);padding:2rem;">No hay servicios.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

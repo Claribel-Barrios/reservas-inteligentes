@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Gestión de Usuarios{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>👥 Usuarios</h1>
+    <p>Gestiona el acceso y roles de los usuarios del sistema</p>
+</div>
+
+<div class="table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Teléfono</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th>Registro</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for u in usuarios %}
+        <tr>
+            <td><strong>{{ u.nombre }}</strong></td>
+            <td style="color:var(--muted);">{{ u.correo }}</td>
+            <td style="color:var(--muted);">{{ u.telefono or '—' }}</td>
+            <td>
+                <span class="badge badge-{% if u.rol == 'admin' %}danger{% elif u.rol == 'empleado' %}warning{% else %}info{% endif %}">
+                    {{ u.rol | capitalize }}
+                </span>
+            </td>
+            <td>
+                {% if u.activo %}
+                    <span class="badge badge-success">Activo</span>
+                {% else %}
+                    <span class="badge badge-danger">Inactivo</span>
+                {% endif %}
+            </td>
+            <td style="color:var(--muted);font-size:.82rem;">{{ u.fecha_registro.strftime('%d/%m/%Y') }}</td>
+            <td>
+                <div style="display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;">
+                    <form method="POST" action="{{ url_for('admin.usuario_toggle', uid=u.id) }}">
+                        <button class="btn btn-outline btn-sm" title="{{ 'Desactivar' if u.activo else 'Activar' }}">
+                            {{ '🔴' if u.activo else '🟢' }}
+                        </button>
+                    </form>
+                    <form method="POST" action="{{ url_for('admin.usuario_rol', uid=u.id) }}" style="display:flex;gap:.3rem;align-items:center;">
+                        <select name="rol" class="form-control" style="padding:.3rem .5rem;font-size:.8rem;width:auto;">
+                            <option value="usuario" {% if u.rol=='usuario' %}selected{% endif %}>Usuario</option>
+                            <option value="empleado" {% if u.rol=='empleado' %}selected{% endif %}>Empleado</option>
+                            <option value="admin" {% if u.rol=='admin' %}selected{% endif %}>Admin</option>
+                        </select>
+                        <button class="btn btn-outline btn-sm">✓</button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" style="text-align:center;color:var(--muted);padding:2rem;">No hay usuarios.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
