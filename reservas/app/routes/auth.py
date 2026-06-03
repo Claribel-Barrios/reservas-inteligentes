@@ -95,8 +95,10 @@ def recuperar():
             db.session.commit()
             try:
                 enviar_recuperacion(usuario, token)
-            except Exception:
-                pass  # En demo, no hay servidor de correo real
+            except Exception as e:
+                print("ERROR CORREO:", e)
+                flash("No se pudo enviar el correo de recuperación. Revisa la configuración de correo.", "danger")
+                return redirect(url_for("auth.recuperar"))
 
         flash("Si el correo existe, recibirás un enlace de recuperación.", "info")
         return redirect(url_for("auth.login"))
