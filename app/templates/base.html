@@ -6,25 +6,26 @@
     <title>{% block title %}Sistema de Reservas{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="icon" href="{{ url_for('static', filename='img/favicon.svg') }}" type="image/svg+xml">
     <style>
         :root {
-            --bg: #0a0f1e;
-            --surface: #111827;
-            --surface2: #1a2438;
-            --border: rgba(255,255,255,0.08);
-            --primary: #3b82f6;
-            --primary-dark: #1d4ed8;
-            --primary-glow: rgba(59,130,246,0.2);
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface2: #f1f5f9;
+            --border: rgba(2,6,23,0.06);
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --primary-glow: rgba(37,99,235,0.12);
             --accent: #06b6d4;
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
             --info: #6366f1;
-            --text: #f1f5f9;
-            --muted: #94a3b8;
-            --card: #141e33;
+            --text: #0f172a;
+            --muted: #475569;
+            --card: #ffffff;
             --radius: 14px;
-            --shadow: 0 4px 24px rgba(0,0,0,0.4);
+            --shadow: 0 6px 18px rgba(15,23,42,0.06);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -39,13 +40,13 @@
 
         /* ---- NAV ---- */
         nav {
-            background: rgba(10,15,30,0.9);
-            backdrop-filter: blur(20px);
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(6px);
             border-bottom: 1px solid var(--border);
             padding: 0 2rem;
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -66,17 +67,27 @@
 
         .nav-links { display: flex; gap: .25rem; align-items: center; }
 
-        .nav-links a {
-            color: var(--muted);
+        nav > a {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            padding: .55rem 1rem;
+            border-radius: 12px;
+            border: 1px solid transparent;
+            background: rgba(37,99,235,.08);
+            color: var(--primary);
             text-decoration: none;
-            padding: .45rem .85rem;
-            border-radius: 8px;
             font-size: .875rem;
-            font-weight: 500;
+            font-weight: 600;
             transition: all .2s;
+            white-space: nowrap;
         }
 
-        .nav-links a:hover { color: var(--text); background: var(--surface2); }
+        nav > a:hover {
+            background: rgba(37,99,235,.16);
+            color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
 
         .btn {
             display: inline-flex;
@@ -98,6 +109,14 @@
             background: var(--primary);
             color: #fff;
         }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 4px 16px var(--primary-glow); }
+
+        .btn-register,
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+        .btn-register:hover,
         .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 4px 16px var(--primary-glow); }
 
         .btn-outline {
@@ -217,24 +236,22 @@
 </head>
 <body>
 
-<nav>
-    <a href="{{ url_for('main.index') }}" class="nav-brand">
-        📅 <span>Reservas</span>Inteligente
-    </a>
-    <div class="nav-links">
-        <a href="{{ url_for('main.servicios') }}" class="hide-mobile">Servicios</a>
-        {% if current_user.is_authenticated %}
-            <a href="{{ url_for('reservas.mis_reservas') }}" class="hide-mobile">Mis Reservas</a>
-            {% if current_user.is_admin %}
-            <a href="{{ url_for('admin.dashboard') }}" class="hide-mobile">⚙️ Admin</a>
-            {% endif %}
-            <a href="{{ url_for('auth.perfil') }}" class="hide-mobile">👤 {{ current_user.nombre.split()[0] }}</a>
-            <a href="{{ url_for('auth.logout') }}" class="btn btn-outline btn-sm">Salir</a>
-        {% else %}
-            <a href="{{ url_for('auth.login') }}" class="btn btn-outline btn-sm">Iniciar sesión</a>
-            <a href="{{ url_for('auth.registro') }}" class="btn btn-primary btn-sm">Registrarse</a>
+
+<nav class="navbar">
+    <a href="{{ url_for('main.index') }}"> Inicio</a>
+    <a href="{{ url_for('main.servicios') }}"> Servicios disponibles</a>
+    <a href="#como-funciona"> ¿Cómo funciona?</a>
+    <a href="#contacto"> Contacto</a>
+    {% if current_user.is_authenticated %}
+        <a href="{{ url_for('reservas.mis_reservas') }}">📋 Mis reservas</a>
+        {% if current_user.is_admin %}
+            <a href="{{ url_for('admin.dashboard') }}">⚙️ Admin</a>
         {% endif %}
-    </div>
+        <a href="{{ url_for('auth.logout') }}" class="btn btn-outline btn-sm">Salir</a>
+    {% else %}
+        <a href="{{ url_for('auth.login') }}">👤 Iniciar sesión</a>
+        <a href="{{ url_for('auth.registro') }}" class="btn btn-register"> Registrarse</a>
+    {% endif %}
 </nav>
 
 <div class="flashes">
@@ -252,7 +269,7 @@
     {% block content %}{% endblock %}
 </main>
 
-<footer>
+<footer id="contacto">
     &copy; 2024 Sistema de Reservas Inteligente &mdash; Danna Sánchez & Claribel Barrios
 </footer>
 

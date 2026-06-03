@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+```
+<h1>📅 Agenda tu reserva</h1>
+
+<form>
+
+    <label>Servicio</label>
+    <select>
+        <option>Seleccione un servicio</option>
+        <option>Consulta</option>
+        <option>Asesoría</option>
+        <option>Reserva de espacio</option>
+    </select>
+
+    <label>Fecha</label>
+    <input type="date">
+
+    <label>Hora</label>
+    <input type="time">
+
+    <label>Nombre</label>
+    <input type="text" placeholder="Ingrese su nombre">
+
+    <label>Correo</label>
+    <input type="email" placeholder="correo@ejemplo.com">
+
+    <label>Teléfono</label>
+    <input type="tel" placeholder="3001234567">
+
+    <button type="submit">
+        ✅ Confirmar reserva
+    </button>
+
+</form>
+```
+
+</div>
+
+{% endblock %}

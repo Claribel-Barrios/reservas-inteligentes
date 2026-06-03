@@ -14,9 +14,14 @@ class Config:
     MAIL_SERVER = os.environ.get("MAIL_SERVER", "smtp.gmail.com")
     MAIL_PORT = int(os.environ.get("MAIL_PORT", 587))
     MAIL_USE_TLS = True
-    MAIL_USERNAME = os.environ.get("MAIL_USERNAME", "noreply@reservas.com")
-    MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD", "")
+    MAIL_USERNAME = "reservasinteligentes9@gmail.com"
+    MAIL_PASSWORD = "pbqq yjfy kroz kzxi"
     MAIL_DEFAULT_SENDER = ("Sistema de Reservas", os.environ.get("MAIL_USERNAME", "noreply@reservas.com"))
+
+    # External URL used to build absolute links in emails (useful for ngrok or deployed host)
+    # Example: https://mi-dominio.com or https://abc123.ngrok.io
+    FRONTEND_URL = os.environ.get("FRONTEND_URL")
+    PREFERRED_URL_SCHEME = os.environ.get("PREFERRED_URL_SCHEME", "http")
 
     # Session
     PERMANENT_SESSION_LIFETIME = timedelta(hours=2)

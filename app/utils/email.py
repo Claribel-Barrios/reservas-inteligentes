@@ -45,8 +45,17 @@ def enviar_cancelacion(usuario, reserva):
 
 
 def enviar_recuperacion(usuario, token):
-    from flask import url_for
-    enlace = url_for("auth.reset_password", token=token, _external=True)
+    from flask import url_for, current_app
+    # Prefer an explicit FRONTEND_URL (set via env) so links work when opening emails
+    # from other devices. Fallback to request-based external URL if not configured.
+    base = current_app.config.get("FRONTEND_URL")
+    if base:
+        # build path without external so we can join with the base
+        path = url_for("auth.reset_password", token=token, _external=False)
+        # ensure no double slashes
+        enlace = (base.rstrip("/") + path)
+    else:
+        enlace = url_for("auth.reset_password", token=token, _external=True)
     msg = Message(
         subject="Recuperación de contraseña",
         recipients=[usuario.correo]

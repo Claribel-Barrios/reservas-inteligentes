@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 520" role="img" aria-labelledby="title desc">
+  <title>Ilustración de reservas rápidas</title>
+  <desc>Iconos y panel de reserva modernos con calendario, reloj y confirmación.</desc>
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#eff6ff"/>
+      <stop offset="100%" stop-color="#dbeafe"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff"/>
+      <stop offset="100%" stop-color="#f8fafc"/>
+    </linearGradient>
+  </defs>
+  <rect width="720" height="520" rx="40" fill="url(#bgGrad)"/>
+  <circle cx="160" cy="140" r="90" fill="#2563eb" opacity="0.15"/>
+  <circle cx="560" cy="120" r="60" fill="#06b6d4" opacity="0.15"/>
+  <rect x="96" y="240" width="528" height="232" rx="32" fill="url(#cardGrad)" stroke="#cbd5e1" stroke-width="2"/>
+  <rect x="136" y="290" width="180" height="22" rx="11" fill="#e2e8f0"/>
+  <rect x="136" y="330" width="280" height="20" rx="10" fill="#e2e8f0"/>
+  <rect x="136" y="366" width="240" height="20" rx="10" fill="#e2e8f0"/>
+  <rect x="136" y="402" width="180" height="20" rx="10" fill="#e2e8f0"/>
+  <rect x="456" y="288" width="160" height="110" rx="20" fill="#2563eb" opacity="0.1"/>
+  <circle cx="520" cy="334" r="24" fill="#2563eb"/>
+  <path d="M510 335l10 10 20-20" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="164" y="164" width="130" height="140" rx="26" fill="#fff" stroke="#bfdbfe" stroke-width="3"/>
+  <rect x="192" y="188" width="28" height="28" rx="8" fill="#2563eb"/>
+  <rect x="228" y="188" width="28" height="28" rx="8" fill="#2563eb"/>
+  <rect x="164" y="230" width="130" height="16" rx="8" fill="#e2e8f0"/>
+  <rect x="164" y="258" width="130" height="16" rx="8" fill="#e2e8f0"/>
+  <rect x="164" y="286" width="130" height="16" rx="8" fill="#e2e8f0"/>
+  <circle cx="430" cy="170" r="50" fill="#2563eb" opacity="0.12"/>
+  <rect x="398" y="150" width="40" height="80" rx="20" fill="#1d4ed8"/>
+  <rect x="428" y="150" width="40" height="80" rx="20" fill="#3b82f6"/>
+  <rect x="458" y="150" width="40" height="80" rx="20" fill="#60a5fa"/>
+  <rect x="476" y="90" width="110" height="130" rx="24" fill="#fff" stroke="#bfdbfe" stroke-width="3"/>
+  <rect x="496" y="118" width="70" height="14" rx="7" fill="#e2e8f0"/>
+  <rect x="496" y="146" width="70" height="12" rx="6" fill="#e2e8f0"/>
+  <rect x="496" y="172" width="70" height="12" rx="6" fill="#e2e8f0"/>
+  <ellipse cx="430" cy="100" rx="42" ry="50" fill="#fff" stroke="#93c5fd" stroke-width="3"/>
+  <circle cx="430" cy="90" r="18" fill="#3b82f6"/>
+  <path d="M428 112c8 4 16 4 24 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="462" cy="130" r="8" fill="#60a5fa"/>
+  <circle cx="493" cy="130" r="8" fill="#60a5fa"/>
+</svg>
