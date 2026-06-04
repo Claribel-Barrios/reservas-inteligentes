@@ -1,92 +1,124 @@
 {% extends "base.html" %}
-{% block title %}Servicios - Sistema de Reservas{% endblock %}
 
-{% block extra_css %}
+{% block title %}Servicios{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>Categorías</h1>
+    <p>Selecciona una categoría</p>
+</div>
+
+{% if categoria == 'Salud' %}
+<div style="font-size:60px;text-align:center;">🏥</div>
+<h2>Salud</h2>
+<p>Hospitales, clínicas y consultorios médicos.</p>
+<ul>
+    <li>Consultas médicas</li>
+    <li>Odontología</li>
+    <li>Laboratorios</li>
+    <li>Especialistas</li>
+</ul>
+
+{% elif categoria == 'Deportes' %}
+<div style="font-size:60px;text-align:center;">⚽</div>
+<h2>Deportes</h2>
+<p>Espacios deportivos disponibles.</p>
+<ul>
+    <li>Canchas de fútbol</li>
+    <li>Baloncesto</li>
+    <li>Piscinas</li>
+    <li>Gimnasios</li>
+</ul>
+
+{% elif categoria == 'Restaurantes' %}
+<div style="font-size:60px;text-align:center;">🍽️</div>
+<h2>Restaurantes</h2>
+<p>Reserva mesas y eventos.</p>
+<ul>
+    <li>Pizzerías</li>
+    <li>Sushi</li>
+    <li>Parrillas</li>
+    <li>Cafeterías</li>
+</ul>
+
+{% elif categoria == 'Educación' %}
+<div style="font-size:60px;text-align:center;">📚</div>
+<h2>Educación</h2>
+<p>Tutorías y asesorías académicas.</p>
+<ul>
+    <li>Matemáticas</li>
+    <li>Inglés</li>
+    <li>Programación</li>
+    <li>Física</li>
+</ul>
+
+{% elif categoria == 'Espacios' %}
+<div style="font-size:60px;text-align:center;">🏢</div>
+<h2>Espacios</h2>
+<p>Salas para reuniones y eventos.</p>
+<ul>
+    <li>Auditorios</li>
+    <li>Coworking</li>
+    <li>Salas VIP</li>
+    <li>Conferencias</li>
+</ul>
+
+{% else %}
+<div style="font-size:60px;text-align:center;">📋</div>
+<h2>{{ categoria }}</h2>
+{% endif %}
+
+<div class="service-grid">
+
+{% for categoria in categorias %}
+
+<div class="service-card">
+
+    <div class="service-header">
+
+        <h2>{{ categoria }}</h2>
+
+        <p>Ver servicios disponibles</p>
+
+    </div>
+
+    <div class="service-body">
+
+        <a href="?categoria={{ categoria }}"
+           class="btn btn-primary">
+            Ver servicios
+        </a>
+
+    </div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
 <style>
-.service-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 1.5rem; }
-.service-card {
+.service-grid{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:25px;
+}
+
+.service-card{
+    width:300px;
+    min-height:250px;
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    overflow: hidden;
-    transition: all .25s;
-    display: flex;
-    flex-direction: column;
+    padding: 20px;
+    transition: 0.3s;
 }
-.service-card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0,0,0,.3); border-color: rgba(59,130,246,.3); }
-.service-header {
-    padding: 1.5rem 1.5rem 1rem;
-    border-bottom: 1px solid var(--border);
+
+.service-card:hover{
+    transform: translateY(-5px);
 }
-.service-cat {
-    display: inline-block;
-    padding: .2rem .7rem;
-    background: rgba(99,102,241,.15);
-    color: #a5b4fc;
-    border-radius: 20px;
-    font-size: .72rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: .06em;
-    margin-bottom: .75rem;
-}
-.service-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: .5rem; }
-.service-card .desc { color: var(--muted); font-size: .875rem; line-height: 1.65; }
-.service-body { padding: 1.25rem 1.5rem; flex: 1; display: flex; flex-direction: column; }
-.service-details { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; margin-bottom: 1.25rem; }
-.detail-item { background: var(--surface2); border-radius: 8px; padding: .6rem .75rem; }
-.detail-item .dlbl { font-size: .7rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
-.detail-item .dval { font-size: .95rem; font-weight: 700; margin-top: .2rem; }
-.service-actions { margin-top: auto; }
 </style>
-{% endblock %}
 
-{% block content %}
-<div class="page-header">
-    <h1>Servicios disponibles</h1>
-    <p>Selecciona un servicio para ver los horarios disponibles y reservar</p>
-</div>
-
-<div class="service-grid">
-{% for s in servicios %}
-<div class="service-card">
-    <div class="service-header">
-        {% if s.categoria %}<span class="service-cat">{{ s.categoria }}</span>{% endif %}
-        <h3>
-            {% if s.categoria == 'Salud' %}🏥 {% elif s.categoria == 'Deportes' %}⚽ {% elif s.categoria == 'Educación' %}📚 {% elif s.categoria == 'Espacios' %}🏢 {% else %}📋 {% endif %}
-            {{ s.nombre }}
-        </h3>
-        <p class="desc">{{ s.descripcion }}</p>
-    </div>
-    <div class="service-body">
-        <div class="service-details">
-            <div class="detail-item">
-                <div class="dlbl">⏱ Duración</div>
-                <div class="dval">{{ s.duracion_minutos }} min</div>
-            </div>
-            <div class="detail-item">
-                <div class="dlbl">💰 Precio</div>
-                <div class="dval">${{ "{:,.0f}".format(s.precio) }}</div>
-            </div>
-        </div>
-        <div class="service-actions">
-            {% if current_user.is_authenticated %}
-            <a href="{{ url_for('reservas.nueva', servicio_id=s.id) }}" class="btn btn-primary" style="width:100%;justify-content:center;">
-                Reservar horario
-            </a>
-            {% else %}
-            <a href="{{ url_for('auth.login') }}" class="btn btn-outline" style="width:100%;justify-content:center;">
-                Inicia sesión para reservar
-            </a>
-            {% endif %}
-        </div>
-    </div>
-</div>
-{% else %}
-<div class="card" style="grid-column:1/-1;text-align:center;padding:3rem;">
-    <p style="font-size:3rem;">🗂️</p>
-    <p style="color:var(--muted);margin-top:1rem;">No hay servicios disponibles actualmente.</p>
-</div>
-{% endfor %}
-</div>
 {% endblock %}

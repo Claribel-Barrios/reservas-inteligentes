@@ -55,13 +55,23 @@ def confirmar(horario_id):
         return redirect(url_for("reservas.mis_reservas"))
 
     if request.method == "POST":
+        nombre = request.form.get("nombre", current_user.nombre)
+        telefono = request.form.get("telefono", current_user.telefono or "")
+        correo = request.form.get("correo", current_user.correo)
         notas = request.form.get("notas", "")
+
+        reserva_notas = (
+            f"Cliente: {nombre}\n"
+            f"Teléfono: {telefono}\n"
+            f"Correo: {correo}\n"
+            f"Notas: {notas}"
+        ).strip()
 
         reserva = Reserva(
             usuario_id=current_user.id,
             horario_id=horario_id,
             estado="confirmada",
-            notas=notas,
+            notas=reserva_notas,
             codigo=generar_codigo()
         )
         horario.cupos_disponibles -= 1

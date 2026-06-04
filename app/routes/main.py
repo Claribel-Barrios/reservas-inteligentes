@@ -21,11 +21,34 @@ def index():
 
 @main_bp.route("/servicios")
 def servicios():
-    categoria = None
+
+    categoria = request.args.get("categoria")
+
     query = Servicio.query.filter_by(activo=True)
+
     todos = query.all()
-    categorias = list({s.categoria for s in todos if s.categoria})
-    return render_template("main/servicios.html", servicios=todos, categorias=categorias)
+
+    categorias = sorted(
+        list({s.categoria for s in todos if s.categoria})
+    )
+
+    if categoria:
+
+        servicios_categoria = Servicio.query.filter_by(
+            activo=True,
+            categoria=categoria
+        ).all()
+
+        return render_template(
+            "main/categoria.html",
+            categoria=categoria,
+            servicios=servicios_categoria
+        )
+
+    return render_template(
+        "main/servicios.html",
+        categorias=categorias
+    )
 
 
 @main_bp.route('/contacto', methods=['POST'])

@@ -43,6 +43,18 @@
     <div class="card">
         <form method="POST">
             <div class="form-group">
+                <label class="form-label">Nombre completo</label>
+                <input type="text" name="nombre" class="form-control" value="{{ current_user.nombre }}" placeholder="Tu nombre completo" required />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Teléfono / Celular</label>
+                <input type="text" name="telefono" class="form-control" value="{{ current_user.telefono or '' }}" placeholder="Ej. 0991234567" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Correo electrónico</label>
+                <input type="email" name="correo" class="form-control" value="{{ current_user.correo }}" placeholder="tu@email.com" required />
+            </div>
+            <div class="form-group">
                 <label class="form-label">Notas adicionales (opcional)</label>
                 <textarea name="notas" class="form-control" placeholder="¿Alguna indicación especial para tu reserva?"></textarea>
             </div>

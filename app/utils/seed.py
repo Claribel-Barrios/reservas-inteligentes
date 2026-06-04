@@ -65,6 +65,30 @@ def seed_data():
             precio=90000,
             categoria="Deportes",
         ),
+        Servicio(
+            nombre="Restaurante La Toscana",
+            categoria="Restaurantes",
+            descripcion="Reserva de mesa para eventos y cenas",
+            duracion_minutos=90,
+            precio=80000,
+            activo=True
+        ),
+        Servicio(
+            nombre="Sushi House",
+            categoria="Restaurantes",
+            descripcion="Comida japonesa",
+            duracion_minutos=90,
+            precio=70000,
+            activo=True
+        ),
+        Servicio(
+            nombre="Parrilla Colombiana",
+            categoria="Restaurantes",
+            descripcion="Carnes y parrillas",
+            duracion_minutos=90,
+            precio=60000,
+            activo=True
+         )
     ]
     db.session.add_all(servicios)
     db.session.flush()  # Obtener IDs
