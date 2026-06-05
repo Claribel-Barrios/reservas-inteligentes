@@ -352,13 +352,19 @@
 <div class="grid-3">
 {% for s in servicios %}
 <div class="service-card">
-    <span class="service-icon">
-        {% if s.categoria == 'Salud' %}🏥
-        {% elif s.categoria == 'Deportes' %}⚽
-        {% elif s.categoria == 'Educación' %}📚
-        {% elif s.categoria == 'Espacios' %}🏢
-        {% else %}📋{% endif %}
-    </span>
+    {% set icon = None %}
+    {% if s.categoria == 'Salud' %}
+        {% set icon = '🏥' %}
+    {% elif s.categoria == 'Deportes' %}
+        {% set icon = '⚽' %}
+    {% elif s.categoria == 'Espacios' %}
+        {% set icon = '🏢' %}
+    {% elif s.categoria == 'Restaurantes' %}
+        {% set icon = '🍽️' %}
+    {% endif %}
+    {% if icon %}
+    <span class="service-icon">{{ icon }}</span>
+    {% endif %}
     <h3>{{ s.nombre }}</h3>
     <p>{{ s.descripcion[:100] }}{% if s.descripcion|length > 100 %}...{% endif %}</p>
     <div class="service-meta">

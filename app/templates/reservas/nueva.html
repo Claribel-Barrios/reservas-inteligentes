@@ -3,7 +3,7 @@
 {% block content %}
 <div class="page-header">
     <h1>
-        {% if servicio.categoria == 'Salud' %}🏥 {% elif servicio.categoria == 'Deportes' %}⚽ {% elif servicio.categoria == 'Educación' %}📚 {% elif servicio.categoria == 'Espacios' %}🏢 {% else %}📋 {% endif %}
+        {% if servicio.categoria == 'Salud' %}🏥 {% elif servicio.categoria == 'Deportes' %}⚽ {% elif servicio.categoria == 'Educación' %} {% elif servicio.categoria == 'Espacios' %}🏢 {% elif servicio.categoria == 'Restaurantes' %}🍽️ {% else %}📋 {% endif %}
         {{ servicio.nombre }}
     </h1>
     <p>Selecciona un horario disponible para tu reserva</p>

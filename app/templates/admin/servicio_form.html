@@ -30,7 +30,7 @@
                 <label class="form-label">Categoría</label>
                 <select name="categoria" class="form-control">
                     <option value="">Sin categoría</option>
-                    {% for cat in ['Salud', 'Deportes', 'Educación', 'Espacios', 'Tecnología', 'Otro'] %}
+                    {% for cat in ['Salud', 'Deportes', 'Educación', 'Espacios', 'Restaurantes', 'Tecnología', 'Otro'] %}
                     <option value="{{ cat }}" {% if servicio and servicio.categoria == cat %}selected{% endif %}>{{ cat }}</option>
                     {% endfor %}
                 </select>
