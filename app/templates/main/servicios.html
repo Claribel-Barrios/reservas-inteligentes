@@ -16,8 +16,10 @@
 <ul>
     <li>Consultas médicas</li>
     <li>Odontología</li>
-    <li>Laboratorios</li>
+    <li>Laboratorios clínicos</li>
     <li>Especialistas</li>
+    <li>Psicología</li>
+    <li>Fisioterapia</li>
 </ul>
 
 {% elif categoria == 'Deportes' %}
@@ -29,21 +31,12 @@
     <li>Baloncesto</li>
     <li>Piscinas</li>
     <li>Gimnasios</li>
+    <li>Clases de yoga</li>
+    <li>Entrenamiento personal</li>
 </ul>
 
-{% elif categoria == 'Restaurantes' %}
-<div style="font-size:60px;text-align:center;">🍽️</div>
-<h2>Restaurantes</h2>
-<p>Reserva mesas y eventos.</p>
-<ul>
-    <li>Pizzerías</li>
-    <li>Sushi</li>
-    <li>Parrillas</li>
-    <li>Cafeterías</li>
-</ul>
 
 {% elif categoria == 'Educación' %}
-<div style="font-size:60px;text-align:center;">📚</div>
 <h2>Educación</h2>
 <p>Tutorías y asesorías académicas.</p>
 <ul>
@@ -51,6 +44,21 @@
     <li>Inglés</li>
     <li>Programación</li>
     <li>Física</li>
+    <li>Química</li>
+    <li>Capacitación empresarial</li>
+</ul>
+
+{% elif categoria == 'Restaurantes' %}
+<div style="font-size:60px;text-align:center;">🍽️</div>
+<h2>Restaurantes</h2>
+<p>Reserva una mesa o servicio de comida para tus eventos.</p>
+<ul>
+    <li>Cena romántica</li>
+    <li>Almuerzos empresariales</li>
+    <li>Eventos especiales</li>
+    <li>Comida a domicilio</li>
+    <li>Degustación privada</li>
+    <li>Catering para grupos</li>
 </ul>
 
 {% elif categoria == 'Espacios' %}
@@ -62,10 +70,12 @@
     <li>Coworking</li>
     <li>Salas VIP</li>
     <li>Conferencias</li>
+    <li>Sesiones de fotografía</li>
+    <li>Talleres corporativos</li>
 </ul>
 
 {% else %}
-<div style="font-size:60px;text-align:center;">📋</div>
+<div style="font-size:60px;text-align:center;"> </div>
 <h2>{{ categoria }}</h2>
 {% endif %}
 
@@ -76,10 +86,21 @@
 <div class="service-card">
 
     <div class="service-header">
+        {% if categoria == 'Salud' %}
+            <img class="category-icon" src="{{ url_for('static', filename='img/categorias/salud.svg') }}" alt="Salud" />
+        {% elif categoria == 'Deportes' %}
+            <img class="category-icon" src="{{ url_for('static', filename='img/categorias/deportes.svg') }}" alt="Deportes" />
+        {% elif categoria == 'Educación' %}
+            <img class="category-icon" src="{{ url_for('static', filename='img/categorias/educacion.svg') }}" alt="Educación" />
+        {% elif categoria == 'Restaurantes' %}
+            <img class="category-icon" src="{{ url_for('static', filename='img/categorias/restaurantes.svg') }}" alt="Restaurantes" />
+        {% elif categoria == 'Espacios' %}
+            <img class="category-icon" src="{{ url_for('static', filename='img/categorias/espacios.svg') }}" alt="Espacios" />
+        {% endif %}
 
         <h2>{{ categoria }}</h2>
 
-        <p>Ver servicios disponibles</p>
+        <p> Ver servicios disponibles </p>
 
     </div>
 
@@ -118,6 +139,19 @@
 
 .service-card:hover{
     transform: translateY(-5px);
+}
+.category-icon{
+    width:48px;
+    height:48px;
+    margin-bottom:1rem;
+    display:block;
+}
+.service-header h2{
+    margin:0 0 .5rem;
+}
+.service-header p{
+    margin:0;
+    color:var(--muted);
 }
 </style>
 
