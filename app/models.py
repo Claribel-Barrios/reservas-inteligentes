@@ -36,6 +36,20 @@ class Usuario(db.Model, UserMixin):
         return self.rol in ("admin", "empleado")
 
 
+class RecuperacionPassword(db.Model):
+    __tablename__ = "recuperacion_password"
+
+    id = db.Column(db.Integer, primary_key=True)
+    usuario_id = db.Column(db.Integer, db.ForeignKey("usuarios.id"), nullable=False)
+    codigo = db.Column(db.String(6), nullable=False)
+    fecha_expiracion = db.Column(db.DateTime, nullable=False)
+
+    usuario = db.relationship("Usuario", backref="recuperacion_passwords", lazy=True)
+
+    def __repr__(self):
+        return f"<RecuperacionPassword usuario_id={self.usuario_id} codigo={self.codigo}>"
+
+
 class Servicio(db.Model):
     __tablename__ = "servicios"
 

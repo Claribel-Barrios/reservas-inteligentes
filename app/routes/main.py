@@ -51,6 +51,11 @@ def servicios():
     )
 
 
+@main_bp.route('/politica-datos')
+def politica_datos():
+    return render_template('auth/politica_datos.html')
+
+
 @main_bp.route('/contacto', methods=['POST'])
 def contacto():
     nombre = request.form.get('nombre', '').strip()

@@ -24,7 +24,7 @@ class Config:
     PREFERRED_URL_SCHEME = os.environ.get("PREFERRED_URL_SCHEME", "http")
 
     # Session
-    PERMANENT_SESSION_LIFETIME = timedelta(hours=2)
+    PERMANENT_SESSION_LIFETIME = timedelta(minutes=15)
     REMEMBER_COOKIE_DURATION = timedelta(days=7)
 
     # Pagination
