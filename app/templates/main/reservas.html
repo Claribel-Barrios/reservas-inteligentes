@@ -7,30 +7,71 @@
 ```
 <h1>📅 Agenda tu reserva</h1>
 
-<form>
+<form method="POST" action="/reservar/{{ servicio.id }}"></form>
 
-    <label>Servicio</label>
-    <select>
-        <option>Seleccione un servicio</option>
-        <option>Consulta</option>
-        <option>Asesoría</option>
-        <option>Reserva de espacio</option>
-    </select>
+    <label>Nombres completos</label>
+    <input type="text" name="nombre">
+    <input type="text" placeholder="Ingrese sus nombres completos">
 
-    <label>Fecha</label>
-    <input type="date">
-
-    <label>Hora</label>
-    <input type="time">
-
-    <label>Nombre</label>
-    <input type="text" placeholder="Ingrese su nombre">
-
-    <label>Correo</label>
+    <label>Correo electrónico</label>
+    <input type="email" name="correo">
     <input type="email" placeholder="correo@ejemplo.com">
 
     <label>Teléfono</label>
+    <input type="tel" name="telefono">
     <input type="tel" placeholder="3001234567">
+
+    <label>Fecha inicial</label>
+    <input type="date" name="fecha_inicio" required>
+
+    <label>Fecha final</label>
+    <input type="date" name="fecha_fin" required>
+
+    <label>Horarios disponibles</label>
+    <select name="horario_id" required>
+    <option>Seleccione un horario</option>
+
+    {% if horarios %}
+        {% for h in horarios %}
+            <option value="{{ h.id }}">
+                {{ h.fecha }} - {{ h.hora }} ({{ h.cupos_disponibles }} cupos)
+            </option>
+        {% endfor %}
+    {% endif %}
+</select>
+
+    <label>Método de pago</label>
+    <select>
+        <option>Seleccione un método</option>
+        <option>Efectivo</option>
+        <option>Tarjeta débito</option>
+        <option>Tarjeta crédito</option>
+        <option>Nequi</option>
+        <option>Daviplata</option>
+    </select>
+
+   {% if servicio.categoria == 'Salud' %}
+<div id="doctor-section">
+    <label>Doctor</label>
+    <select name="doctor_id">
+        <option>Seleccione un doctor</option>
+        {% for d in doctores %}
+            <option value="{{ d.id }}">{{ d.nombre }}</option>
+        {% endfor %}
+    </select>
+</div>
+{% endif %}
+
+  {% if servicio.categoria != 'Salud' %}
+<div id="personas-section">
+    <label>Cantidad de personas</label>
+    <input type="number" name="personas" min="1">
+</div>
+{% endif %}
+
+    <label>Observaciones</label>
+    <textarea name="observaciones"></textarea>
+    <textarea placeholder="Escriba alguna observación"></textarea>
 
     <button type="submit">
         ✅ Confirmar reserva
