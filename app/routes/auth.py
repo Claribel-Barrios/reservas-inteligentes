@@ -3,10 +3,10 @@ from flask_login import login_user, logout_user, login_required, current_user
 from flask_mail import Message
 from app import mail
 from datetime import datetime, timedelta
+import random
 import secrets
 from app import db, bcrypt
-from app.models import Usuario
-from app.utils.email import enviar_recuperacion
+from app.models import Usuario, RecuperacionPassword
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -22,8 +22,11 @@ def registro():
         telefono = request.form.get("telefono", "").strip()
         password = request.form.get("password", "")
         confirmar = request.form.get("confirmar_password", "")
+        acepta_politica = request.form.get("acepta_politica")
 
         errores = []
+        if not acepta_politica:
+            errores.append("Debes aceptar la Política de Tratamiento de Datos para registrarte.")
         if not nombre:
             errores.append("El nombre es obligatorio.")
         if not correo:
@@ -62,6 +65,7 @@ def login():
         correo = request.form.get("correo", "").strip().lower()
         password = request.form.get("password", "")
         recordar = request.form.get("recordar") == "on"
+        session.permanent = True
 
         usuario = Usuario.query.filter_by(correo=correo).first()
 
@@ -83,6 +87,7 @@ def login():
 @login_required
 def logout():
     logout_user()
+    session.clear()
     flash("Sesión cerrada correctamente.", "info")
     return redirect(url_for("main.index"))
 
@@ -102,31 +107,29 @@ def recuperar():
         if usuario:
             try:
                 token = secrets.token_urlsafe(32)
+                codigo = f"{random.randint(100000, 999999)}"
+                expira = datetime.utcnow() + timedelta(minutes=10)
+
                 usuario.token_recuperacion = token
                 usuario.token_expira = datetime.utcnow() + timedelta(hours=1)
+                db.session.add(RecuperacionPassword(usuario_id=usuario.id, codigo=codigo, fecha_expiracion=expira))
                 db.session.commit()
 
-                enlace = url_for("auth.reset_password", token=token, _external=True)
+                session["reset_token"] = token
+                session["codigo_recuperacion"] = codigo
+                session["codigo_expiracion"] = expira.isoformat()
 
                 msg = Message(
                     subject="Recuperación de contraseña",
                     recipients=[usuario.correo]
                 )
 
-                msg.html = f"""
-                Recuperación de contraseña
-
-                Hola {usuario.nombre},
-
-                Haz clic en el siguiente enlace para cambiar tu contraseña:
-
-                [Restablecer contraseña]({enlace})
-
-                Este enlace expirará en 1 hora.
-                """
+                html = render_template("emails/recuperacion_password.html", codigo=codigo)
+                msg.html = html
 
                 mail.send(msg)
-                print("Correo enviado")
+                flash("Hemos enviado un código de verificación a tu correo.", "info")
+                return redirect(url_for("auth.verificar_codigo"))
 
             except Exception as e:
                 print("ERROR:")
@@ -138,8 +141,35 @@ def recuperar():
     return render_template("auth/recuperar.html")
 
 
+@auth_bp.route("/verificar-codigo", methods=["GET", "POST"])
+def verificar_codigo():
+    if request.method == "POST":
+        codigo = request.form.get("codigo", "").strip()
+        codigo_guardado = session.get("codigo_recuperacion")
+        fecha_expiracion = session.get("codigo_expiracion")
+
+        if codigo == codigo_guardado and datetime.fromisoformat(fecha_expiracion) > datetime.utcnow():
+
+            session.pop("codigo_recuperacion", None)
+            session.pop("codigo_expiracion", None)
+
+            flash("Código verificado correctamente.", "success")
+
+            return redirect(
+                url_for(
+                    "auth.nueva_password",
+                    token=session.get("reset_token", "")
+                )
+            )
+
+        flash("El código ingresado no es válido o ha expirado.", "danger")
+        return render_template("auth/verificar_codigo.html")
+
+    return render_template("auth/verificar_codigo.html")
+
+
 @auth_bp.route("/reset/<token>", methods=["GET", "POST"])
-def reset_password(token):
+def nueva_password(token):
     usuario = Usuario.query.filter_by(token_recuperacion=token).first()
 
     if not usuario or (usuario.token_expira and usuario.token_expira < datetime.utcnow()):
@@ -159,10 +189,13 @@ def reset_password(token):
             usuario.token_recuperacion = None
             usuario.token_expira = None
             db.session.commit()
+            session.pop("reset_token", None)
+            session.pop("codigo_recuperacion", None)
+            session.pop("codigo_expiracion", None)  
             flash("Contraseña actualizada exitosamente.", "success")
             return redirect(url_for("auth.login"))
 
-    return render_template("auth/reset_password.html")
+    return render_template("auth/nueva_password.html")
 
 
 @auth_bp.route("/perfil", methods=["GET", "POST"])
@@ -192,3 +225,10 @@ def perfil():
         flash("Perfil actualizado correctamente.", "success")
 
     return render_template("auth/perfil.html")
+
+@auth_bp.after_request
+def add_no_cache_headers(response):
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response

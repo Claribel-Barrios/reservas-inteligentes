@@ -9,7 +9,7 @@
             <p style="color:var(--muted);font-size:.9rem;margin-top:.35rem;">Gestiona tus citas y reservas desde un solo lugar.</p>
         </div>
 
-        <form method="POST">
+        <form method="POST" autocomplete="off">
             <div class="form-group">
                 <label class="form-label"><i class="fa-solid fa-envelope"></i> Correo electrónico</label>
                 <input type="email" name="correo" class="form-control" placeholder="Ejemplo: usuario@gmail.com" required autofocus>
@@ -17,7 +17,7 @@
             <div class="form-group">
                 <label class="form-label"><i class="fa-solid fa-lock"></i> Contraseña</label>
                 <div class="password-container">
-                    <input type="password" id="password" name="password" class="form-control" placeholder="Contraseña" required>
+                    <input type="password" id="password" name="password" class="form-control" autocomplete="off" placeholder="Contraseña" required>
                     <i id="togglePassword" class="fa-solid fa-eye" aria-label="Mostrar u ocultar contraseña"></i>
                 </div>
             </div>
@@ -50,21 +50,41 @@
 
 {% block scripts %}
 <script>
+
+window.addEventListener("pageshow", function () {
+
+    const correo = document.querySelector('input[name="correo"]');
+    const password = document.getElementById("password");
+
+    if (correo) correo.value = "";
+    if (password) password.value = "";
+
+});
+
 const password = document.getElementById("password");
 const toggle = document.getElementById("togglePassword");
 
 if (password && toggle) {
+
     toggle.addEventListener("click", () => {
+
         if (password.type === "password") {
+
             password.type = "text";
             toggle.classList.remove("fa-eye");
             toggle.classList.add("fa-eye-slash");
+
         } else {
+
             password.type = "password";
             toggle.classList.remove("fa-eye-slash");
             toggle.classList.add("fa-eye");
+
         }
+
     });
+
 }
+
 </script>
 {% endblock %}
