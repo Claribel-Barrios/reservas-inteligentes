@@ -11,44 +11,124 @@
 
 <div style="display:grid;grid-template-columns:1fr 320px;gap:2rem;align-items:start;" class="reserva-layout">
     <!-- HORARIOS -->
-    <div>
-        {% if horarios %}
-        {% set fecha_actual = namespace(val='') %}
-        {% for h in horarios %}
-            {% if h.fecha.strftime('%Y-%m-%d') != fecha_actual.val %}
-                {% set fecha_actual.val = h.fecha.strftime('%Y-%m-%d') %}
-                <div style="font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:1.5rem 0 .75rem;{% if loop.first %}margin-top:0;{% endif %}">
-                    📅 {{ h.fecha.strftime('%A %d de %B de %Y') }}
-                </div>
-            {% endif %}
-            <a href="{{ url_for('reservas.confirmar', horario_id=h.id) }}" style="text-decoration:none;">
-                <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.25rem;margin-bottom:.6rem;display:flex;align-items:center;justify-content:space-between;transition:all .2s;cursor:pointer;" 
-                     onmouseenter="this.style.borderColor='rgba(59,130,246,.5)';this.style.background='var(--surface2)'"
-                     onmouseleave="this.style.borderColor='var(--border)';this.style.background='var(--card)'">
-                    <div>
-                        <div style="font-weight:700;font-size:1.05rem;">
-                            ⏰ {{ h.hora_inicio.strftime('%H:%M') }} — {{ h.hora_fin.strftime('%H:%M') }}
-                        </div>
-                        {% if h.responsable %}
-                        <div style="color:var(--muted);font-size:.85rem;margin-top:.2rem;">👤 {{ h.responsable }}</div>
-                        {% endif %}
-                    </div>
-                    <div style="text-align:right;">
-                        <span class="badge badge-success">{{ h.cupos_disponibles }} cupo{% if h.cupos_disponibles != 1 %}s{% endif %}</span>
-                        <div style="color:var(--primary);font-size:.8rem;margin-top:.3rem;font-weight:600;">Reservar →</div>
-                    </div>
-                </div>
-            </a>
-        {% endfor %}
-        {% else %}
-        <div class="card" style="text-align:center;padding:3rem;">
-            <div style="font-size:3rem;margin-bottom:1rem;">😔</div>
-            <h3>Sin horarios disponibles</h3>
-            <p style="color:var(--muted);margin-top:.5rem;">No hay turnos disponibles para este servicio en este momento.</p>
-        </div>
-        {% endif %}
-    </div>
+    <div class="card" style="padding:2rem;">
 
+    <h2>📝 Datos de la reserva</h2>
+
+    <form>
+
+        <label>Nombres completos</label>
+        <input type="text" class="form-control" placeholder="Ingrese sus nombres completos">
+
+        <br>
+
+        <label>Correo electrónico</label>
+        <input type="email" class="form-control" placeholder="correo@ejemplo.com">
+
+        <br>
+
+        <label>Teléfono</label>
+        <input type="tel" class="form-control" placeholder="3001234567">
+
+        <br>
+
+        <label>Fecha inicial</label>
+        <input type="date" class="form-control">
+
+        <br>
+
+        <label>Fecha final</label>
+        <input type="date" class="form-control">
+
+        <br>
+
+        {% if servicio.categoria == 'Salud' %}
+        <label>Doctor</label>
+        <select class="form-control">
+            <option>Seleccione un doctor</option>
+
+            {% for h in horarios %}
+            {% if h.responsable %}
+            <option>{{ h.responsable }}</option>
+            {% endif %}
+            {% endfor %}
+
+        </select>
+        <br>
+        {% endif %}
+
+        {% if servicio.categoria == 'Restaurantes' %}
+        <label>Cantidad de personas</label>
+        <input type="number" min="1" value="1" class="form-control">
+
+        <br>
+
+        <label>Zona</label>
+        <select class="form-control">
+            <option>Interior</option>
+            <option>Terraza</option>
+            <option>VIP</option>
+        </select>
+
+        <br>
+        {% endif %}
+
+        {% if servicio.categoria == 'Deportes' %}
+        <label>Cantidad de jugadores</label>
+        <input type="number" min="1" class="form-control">
+
+        <br>
+        {% endif %}
+
+        {% if servicio.categoria == 'Espacios' %}
+        <label>Cantidad de asistentes</label>
+        <input type="number" min="1" class="form-control">
+
+        <br>
+        {% endif %}
+
+        <label>Horarios disponibles</label>
+
+        <select class="form-control">
+            <option>Seleccione un horario</option>
+
+            {% for h in horarios %}
+            <option>
+                {{ h.fecha.strftime('%d/%m/%Y') }}
+                -
+                {{ h.hora_inicio.strftime('%H:%M') }}
+                ({{ h.cupos_disponibles }} cupos)
+            </option>
+            {% endfor %}
+        </select>
+
+        <br>
+
+        <label>Método de pago</label>
+
+        <select class="form-control">
+            <option>Efectivo</option>
+            <option>Tarjeta Débito</option>
+            <option>Tarjeta Crédito</option>
+            <option>Nequi</option>
+            <option>Daviplata</option>
+        </select>
+
+        <br>
+
+        <label>Observaciones</label>
+
+        <textarea class="form-control" rows="4"></textarea>
+
+        <br>
+
+        <button type="submit" class="btn btn-primary">
+            ✅ Confirmar reserva
+        </button>
+
+    </form>
+
+</div>
     <!-- INFO SERVICIO -->
     <div class="card" style="position:sticky;top:84px;">
         <h3 style="margin-bottom:1rem;font-size:1rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600;">Detalles del servicio</h3>

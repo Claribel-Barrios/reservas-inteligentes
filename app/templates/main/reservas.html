@@ -1,44 +1,131 @@
 {% extends "base.html" %}
+{% block extra_css %}
+<style>
+.header-reserva{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+}
+
+.btn-volver{
+    background:white;
+    border:1px solid var(--border);
+    padding:.6rem 1rem;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:600;
+}
+
+.btn-volver:hover{
+    background:var(--surface2);
+}
+</style>
+{% endblock %}
 
 {% block content %}
 
 <div class="container">
 
-```
-<h1>📅 Agenda tu reserva</h1>
 
-<form>
+<div class="header-reserva">   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+    <h1>📅 Agenda tu reserva</h1>
 
-    <label>Servicio</label>
-    <select>
-        <option>Seleccione un servicio</option>
-        <option>Consulta</option>
-        <option>Asesoría</option>
-        <option>Reserva de espacio</option>
-    </select>
+    <a href="javascript:history.back()"
+       style="padding:10px 15px;
+              background:#f5f5f5;
+              border:1px solid #ccc;
+              border-radius:8px;
+              text-decoration:none;
+              color:black;">
+        ← Volver
+    </a>
+</div>
 
-    <label>Fecha</label>
-    <input type="date">
+<form method="POST" action="/reservar/{{ servicio.id }}">
 
-    <label>Hora</label>
-    <input type="time">
+    <label>Nombres completos</label>
+    <input type="text"
+       name="nombre"
+       placeholder="Ingrese sus nombres completos"
+       required>
 
-    <label>Nombre</label>
-    <input type="text" placeholder="Ingrese su nombre">
-
-    <label>Correo</label>
-    <input type="email" placeholder="correo@ejemplo.com">
+    <label>Correo electrónico</label>
+    <input type="email"
+       name="correo"
+       placeholder="correo@ejemplo.com"
+       required>
 
     <label>Teléfono</label>
-    <input type="tel" placeholder="3001234567">
+    <input type="tel"
+       name="telefono"
+       placeholder="3001234567"
+       required>
+
+    <label>Fecha inicial</label>
+    <input type="date" name="fecha_inicio" required>
+
+    <label>Fecha final</label>
+    <input type="date" name="fecha_fin" required>
+
+    <label>Horarios disponibles</label>
+    <select name="horario_id" required>
+    <option>Seleccione un horario</option>
+
+    {% if horarios %}
+        {% for h in horarios %}
+            <option value="{{ h.id }}">
+                {{ h.fecha }} - {{ h.hora }} ({{ h.cupos_disponibles }} cupos)
+            </option>
+        {% endfor %}
+    {% endif %}
+</select>
+
+    <label>Método de pago</label>
+    <select name="metodo_pago" required>
+        <option>Seleccione un método</option>
+        <option>Efectivo</option>
+        <option>Tarjeta débito</option>
+        <option>Tarjeta crédito</option>
+        <option>Nequi</option>
+        <option>Daviplata</option>
+    </select>
+
+   {% if servicio.categoria == 'Salud' %}
+<div id="doctor-section">
+    <label>Doctor</label>
+    <select name="doctor_id">
+        <option>Seleccione un doctor</option>
+        {% for d in doctores %}
+            <option value="{{ d.id }}">{{ d.nombre }}</option>
+        {% endfor %}
+    </select>
+</div>
+{% endif %}
+
+  {% if servicio.categoria != 'Salud' %}
+<div id="personas-section">
+    <label>Cantidad de personas</label>
+    <input type="number" name="personas" min="1">
+</div>
+{% endif %}
+
+    <label>Observaciones</label>
+    <textarea 
+    name="observaciones"
+    placeholder="Escriba alguna observación">
+    </textarea>
 
     <button type="submit">
         ✅ Confirmar reserva
     </button>
 
 </form>
-```
+
 
 </div>
+
+<style>
+
 
 {% endblock %}
