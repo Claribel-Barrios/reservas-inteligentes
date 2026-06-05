@@ -1,5 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, session
 from flask_login import login_user, logout_user, login_required, current_user
+from flask_mail import Message
+from app import mail
 from datetime import datetime, timedelta
 import secrets
 from app import db, bcrypt
@@ -51,6 +53,8 @@ def registro():
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
+    error = None
+
     if current_user.is_authenticated:
         return redirect(url_for("main.index"))
 
@@ -69,9 +73,10 @@ def login():
                 return redirect(next_page or url_for("admin.dashboard"))
             return redirect(next_page or url_for("main.index"))
 
+        error = "Correo electrónico o contraseña incorrectos."
         flash("Correo o contraseña incorrectos.", "danger")
 
-    return render_template("auth/login.html")
+    return render_template("auth/login.html", error=error)
 
 
 @auth_bp.route("/logout")
@@ -84,24 +89,51 @@ def logout():
 
 @auth_bp.route("/recuperar", methods=["GET", "POST"])
 def recuperar():
+    error = None
+    success = None
+
     if request.method == "POST":
         correo = request.form.get("correo", "").strip().lower()
+
         usuario = Usuario.query.filter_by(correo=correo).first()
 
-        if usuario:
-            token = secrets.token_urlsafe(32)
-            usuario.token_recuperacion = token
-            usuario.token_expira = datetime.utcnow() + timedelta(hours=2)
-            db.session.commit()
-            try:
-                enviar_recuperacion(usuario, token)
-            except Exception as e:
-                print("ERROR CORREO:", e)
-                flash("No se pudo enviar el correo de recuperación. Revisa la configuración de correo.", "danger")
-                return redirect(url_for("auth.recuperar"))
+        success = "Si el correo está registrado, recibirás instrucciones para recuperar tu contraseña."
 
-        flash("Si el correo existe, recibirás un enlace de recuperación.", "info")
-        return redirect(url_for("auth.login"))
+        if usuario:
+            try:
+                token = secrets.token_urlsafe(32)
+                usuario.token_recuperacion = token
+                usuario.token_expira = datetime.utcnow() + timedelta(hours=1)
+                db.session.commit()
+
+                enlace = url_for("auth.reset_password", token=token, _external=True)
+
+                msg = Message(
+                    subject="Recuperación de contraseña",
+                    recipients=[usuario.correo]
+                )
+
+                msg.html = f"""
+                Recuperación de contraseña
+
+                Hola {usuario.nombre},
+
+                Haz clic en el siguiente enlace para cambiar tu contraseña:
+
+                [Restablecer contraseña]({enlace})
+
+                Este enlace expirará en 1 hora.
+                """
+
+                mail.send(msg)
+                print("Correo enviado")
+
+            except Exception as e:
+                print("ERROR:")
+                print(e)
+                error = "Ocurrió un error al enviar el correo."
+
+        return render_template("auth/recuperar.html", success=success, error=error)
 
     return render_template("auth/recuperar.html")
 

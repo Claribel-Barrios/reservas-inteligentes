@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+ {% extends "base.html" %}
 {% block title %}Inicio - Sistema de Reservas Inteligente{% endblock %}
 
 {% block extra_css %}
@@ -234,95 +234,40 @@
     .reserva-form .form-actions a { text-align: center; }
 
     @media (max-width: 860px) {
-        .reserva-form { 
-            grid-template-columns: 1fr; 
-        }
+        .reserva-form { grid-template-columns: 1fr; }
     }
-
-    .categorias-reserva{
-        display:grid;
-        grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-        gap:15px;
-        margin-top:20px;
-    }
-
-    .categoria-card{
-        display:block;
-        padding:20px;
-        background:white;
-        border:1px solid #ddd;
-        border-radius:12px;
-        text-decoration:none;
-        color:#333;
-        font-weight:bold;
-        text-align:center;
-        transition:.3s;
-    }
-
-    .categoria-card:hover{
-        background:#2563eb;
-        color:white;
-        transform:translateY(-3px);
-    }
-
     </style>
 
 {% endblock %}
 
 {% block content %}
 <div class="hero" id="reservar">
-    <div class="hero" id="reservar">
     <div class="hero-grid">
-
         <div class="hero-copy">
             <div class="hero-tag">
                 ✨ Reservas rápidas y seguras
             </div>
-
             <h1>Agenda tu reserva<br><em>en minutos</em></h1>
-
-            <p>
-                Gestiona turnos, servicios y recursos de manera eficiente.
-                Confirmaciones automáticas y disponibilidad en tiempo real.
-            </p>
-
+            <p>Gestiona turnos, servicios y recursos de manera eficiente. Confirmaciones automáticas y disponibilidad en tiempo real.</p>
             <div class="hero-ctas">
-
-                <button class="btn btn-primary" onclick="mostrarServicios()">
-                    📅 Agenda tu reserva
-                </button>
-
-                <div id="serviciosModal" style="display:none; margin-top:20px;">
-                    <h3>¿Qué servicio deseas reservar?</h3>
-
-                    <div class="categorias-reserva">
-                        <a href="{{ url_for('main.servicios') }}" class="categoria-card">🍽️ Restaurantes</a>
-                        <a href="{{ url_for('main.servicios') }}" class="categoria-card">⚽ Deportes</a>
-                        <a href="{{ url_for('main.servicios') }}" class="categoria-card">📚 Educación</a>
-                        <a href="{{ url_for('main.servicios') }}" class="categoria-card">🏢 Espacios</a>
-                        <a href="{{ url_for('main.servicios') }}" class="categoria-card">🏥 Salud</a>
-                    </div>
-                </div>
-
-                {% if not current_user.is_authenticated %}
-                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline">
-                        Iniciar sesión
-                    </a>
+                {% if servicios|length > 0 %}
+                <a href="{{ url_for('reservas.nueva', servicio_id=servicios[0].id) }}" class="btn btn-primary">📅 Reserva ahora</a>
                 {% else %}
-                    <a href="{{ url_for('reservas.mis_reservas') }}" class="btn btn-outline">
-                        Mis reservas
-                    </a>
+                <a href="{{ url_for('main.servicios') }}" class="btn btn-primary">📅 Reservar</a>
                 {% endif %}
-
+                {% if not current_user.is_authenticated %}
+                <a href="{{ url_for('auth.login') }}" class="btn btn-outline">Iniciar sesión</a>
+                {% else %}
+                <a href="{{ url_for('reservas.mis_reservas') }}" class="btn btn-outline">Mis reservas</a>
+                {% endif %}
             </div>
         </div>
-
         <div class="hero-visual">
-            <img src="{{ url_for('static', filename='img/hero-illustration.svg') }}"
-                 alt="Ilustración de reservas rápidas">
+            <img src="{{ url_for('static', filename='img/hero-illustration.svg') }}" alt="Ilustración de reservas rápidas" />
         </div>
-
     </div>
+</div>
+
 <div class="feature-highlights">
     <div class="feature-highlight">
         <div class="icon">⚡</div>
@@ -462,16 +407,4 @@
         </div>
     </div>
 </div>
-<script>
-function mostrarServicios() {
-    const modal = document.getElementById("serviciosModal");
-
-    if(modal.style.display === "none"){
-        modal.style.display = "block";
-    }else{
-        modal.style.display = "none";
-    }
-}
-</script>
-
-{% endblock %}  
+{% endblock %}

@@ -1,23 +1,248 @@
 {% extends "base.html" %}
+
 {% block title %}Recuperar contraseña{% endblock %}
-{% block content %}
-<div style="max-width:420px;margin:3rem auto;">
-    <div class="card">
-        <div style="text-align:center;margin-bottom:2rem;">
-            <div style="font-size:2.5rem;margin-bottom:.75rem;">🔑</div>
-            <h1 style="font-size:1.5rem;font-weight:800;">Recuperar contraseña</h1>
-            <p style="color:var(--muted);font-size:.9rem;margin-top:.35rem;">Ingresa tu correo y recibirás un enlace de recuperación</p>
-        </div>
-        <form method="POST">
-            <div class="form-group">
-                <label class="form-label">Correo electrónico</label>
-                <input type="email" name="correo" class="form-control" placeholder="tu@correo.com" required autofocus>
-            </div>
-            <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:.8rem;">Enviar enlace</button>
-        </form>
-        <div style="text-align:center;margin-top:1.5rem;font-size:.875rem;">
-            <a href="{{ url_for('auth.login') }}" style="color:var(--muted);text-decoration:none;">← Volver al login</a>
-        </div>
-    </div>
-</div>
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+    }
+
+    .auth-container {
+        min-height: calc(100vh - 64px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+    }
+
+    .auth-card {
+        width: 100%;
+        max-width: 430px;
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 2.2rem;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+        border: 1px solid rgba(255,255,255,0.2);
+        animation: fadeIn .35s ease;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .auth-icon {
+        width: 85px;
+        height: 85px;
+        margin: 0 auto 1rem;
+        border-radius: 50%;
+        background: rgba(37,99,235,.1);
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+    }
+
+    .auth-title {
+        font-size: 1.7rem;
+        font-weight: 800;
+        color: var(--text);
+        margin-bottom: .5rem;
+    }
+
+    .auth-subtitle {
+        color: var(--muted);
+        font-size: .95rem;
+        line-height: 1.5;
+    }
+
+    .form-group {
+        margin-bottom: 1.3rem;
+    }
+
+    .form-label {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        margin-bottom: .55rem;
+        font-size: .85rem;
+        font-weight: 700;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: .05em;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: .95rem 1rem;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        font-size: .95rem;
+        background: #fff;
+        transition: all .2s ease;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(37,99,235,.12);
+    }
+
+    .btn-recover {
+        width: 100%;
+        justify-content: center;
+        padding: .95rem;
+        font-size: .95rem;
+        font-weight: 700;
+        border-radius: 12px;
+        margin-top: .5rem;
+    }
+
+    .back-login {
+        text-align: center;
+        margin-top: 1.5rem;
+    }
+
+    .back-login a {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: .9rem;
+        font-weight: 600;
+        transition: color .2s;
+    }
+
+    .back-login a:hover {
+        color: var(--primary);
+    }
+
+    .alert-error,
+    .alert-success {
+        border-radius: 12px;
+        padding: .9rem 1rem;
+        margin-bottom: 1rem;
+        font-size: .9rem;
+        display: flex;
+        align-items: center;
+        gap: .6rem;
+    }
+
+    .alert-error {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #dc2626;
+    }
+
+    .alert-success {
+        background: #ecfdf5;
+        border: 1px solid #a7f3d0;
+        color: #059669;
+    }
+
+    @media (max-width: 500px) {
+        .auth-card {
+            padding: 1.7rem;
+        }
+
+        .auth-title {
+            font-size: 1.45rem;
+        }
+    }
+</style>
 {% endblock %}
+
+{% block content %}
+
+<div class="auth-container">
+
+    <div class="auth-card">
+
+        <div class="auth-header">
+
+            <div class="auth-icon">
+                <i class="fa-solid fa-unlock-keyhole"></i>
+            </div>
+
+            <h1 class="auth-title">
+                Recuperar contraseña
+            </h1>
+
+            <p class="auth-subtitle">
+                Ingresa tu correo electrónico y te enviaremos un enlace
+                para restablecer tu contraseña de forma segura.
+            </p>
+
+        </div>
+
+        {% if error %}
+        <div class="alert-error">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            {{ error }}
+        </div>
+        {% endif %}
+
+        {% if success %}
+        <div class="alert-success">
+            <i class="fa-solid fa-circle-check"></i>
+            {{ success }}
+        </div>
+        {% endif %}
+
+        <form method="POST">
+
+            <div class="form-group">
+
+                <label class="form-label">
+                    <i class="fa-solid fa-envelope"></i>
+                    Correo electrónico
+                </label>
+
+                <input
+                    type="email"
+                    name="correo"
+                    class="form-control"
+                    placeholder="usuario@gmail.com"
+                    required
+                    autofocus>
+
+            </div>
+
+            <button
+                type="submit"
+                class="btn btn-primary btn-recover">
+
+                <i class="fa-solid fa-paper-plane"></i>
+                Enviar enlace de recuperación
+
+            </button>
+
+        </form>
+
+        <div class="back-login">
+
+            <a href="{{ url_for('auth.login') }}">
+
+                <i class="fa-solid fa-arrow-left"></i>
+                Volver al inicio de sesión
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+```
