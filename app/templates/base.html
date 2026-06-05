@@ -6,6 +6,8 @@
     <title>{% block title %}Sistema de Reservas{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="icon" href="{{ url_for('static', filename='img/favicon.svg') }}" type="image/svg+xml">
     <style>
         :root {
@@ -133,8 +135,60 @@
 
         .btn-sm { padding: .4rem .85rem; font-size: .8rem; }
 
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 700;
+            justify-content: center;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .login-error {
+            color: #dc3545;
+            font-size: 13px;
+            margin: 8px 0 15px 0;
+            text-align: left;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .password-container input {
+            width: 100%;
+            padding-right: 45px;
+        }
+
+        .password-container i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #666;
+        }
+
         /* ---- MAIN ---- */
-        main { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; }
+        main {
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .auth-page main {
+            max-width: none;
+            padding: 0;
+        }
 
         /* ---- CARDS ---- */
         .card {
@@ -250,20 +304,9 @@
         <a href="{{ url_for('auth.logout') }}" class="btn btn-outline btn-sm">Salir</a>
     {% else %}
         <a href="{{ url_for('auth.login') }}">👤 Iniciar sesión</a>
-        <a href="{{ url_for('auth.registro') }}" class="btn btn-register"> Registrarse</a>
+        <a href="{{ url_for('auth.registro') }}">Crear cuenta</a>
     {% endif %}
 </nav>
-
-<div class="flashes">
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% for category, message in messages %}
-    <div class="alert alert-{{ category }}">
-        {% if category == 'success' %}✅{% elif category == 'danger' %}❌{% elif category == 'warning' %}⚠️{% else %}ℹ️{% endif %}
-        {{ message }}
-    </div>
-    {% endfor %}
-{% endwith %}
-</div>
 
 <main>
     {% block content %}{% endblock %}
