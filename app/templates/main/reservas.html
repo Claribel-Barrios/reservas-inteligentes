@@ -1,25 +1,66 @@
 {% extends "base.html" %}
+{% block extra_css %}
+<style>
+.header-reserva{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+}
+
+.btn-volver{
+    background:white;
+    border:1px solid var(--border);
+    padding:.6rem 1rem;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:600;
+}
+
+.btn-volver:hover{
+    background:var(--surface2);
+}
+</style>
+{% endblock %}
 
 {% block content %}
 
 <div class="container">
 
-```
-<h1>📅 Agenda tu reserva</h1>
 
-<form method="POST" action="/reservar/{{ servicio.id }}"></form>
+<div class="header-reserva">   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+    <h1>📅 Agenda tu reserva</h1>
+
+    <a href="javascript:history.back()"
+       style="padding:10px 15px;
+              background:#f5f5f5;
+              border:1px solid #ccc;
+              border-radius:8px;
+              text-decoration:none;
+              color:black;">
+        ← Volver
+    </a>
+</div>
+
+<form method="POST" action="/reservar/{{ servicio.id }}">
 
     <label>Nombres completos</label>
-    <input type="text" name="nombre">
-    <input type="text" placeholder="Ingrese sus nombres completos">
+    <input type="text"
+       name="nombre"
+       placeholder="Ingrese sus nombres completos"
+       required>
 
     <label>Correo electrónico</label>
-    <input type="email" name="correo">
-    <input type="email" placeholder="correo@ejemplo.com">
+    <input type="email"
+       name="correo"
+       placeholder="correo@ejemplo.com"
+       required>
 
     <label>Teléfono</label>
-    <input type="tel" name="telefono">
-    <input type="tel" placeholder="3001234567">
+    <input type="tel"
+       name="telefono"
+       placeholder="3001234567"
+       required>
 
     <label>Fecha inicial</label>
     <input type="date" name="fecha_inicio" required>
@@ -41,7 +82,7 @@
 </select>
 
     <label>Método de pago</label>
-    <select>
+    <select name="metodo_pago" required>
         <option>Seleccione un método</option>
         <option>Efectivo</option>
         <option>Tarjeta débito</option>
@@ -70,16 +111,21 @@
 {% endif %}
 
     <label>Observaciones</label>
-    <textarea name="observaciones"></textarea>
-    <textarea placeholder="Escriba alguna observación"></textarea>
+    <textarea 
+    name="observaciones"
+    placeholder="Escriba alguna observación">
+    </textarea>
 
     <button type="submit">
         ✅ Confirmar reserva
     </button>
 
 </form>
-```
+
 
 </div>
+
+<style>
+
 
 {% endblock %}
