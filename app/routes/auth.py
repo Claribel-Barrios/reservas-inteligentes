@@ -12,6 +12,7 @@ auth_bp = Blueprint("auth", __name__)
 
 
 @auth_bp.route("/registro", methods=["GET", "POST"])
+@login_required
 def registro():
     if current_user.is_authenticated:
         return redirect(url_for("main.index"))
@@ -70,7 +71,8 @@ def login():
         usuario = Usuario.query.filter_by(correo=correo).first()
 
         if usuario and usuario.activo and bcrypt.check_password_hash(usuario.password_hash, password):
-            login_user(usuario, remember=recordar)
+            session.clear()
+            login_user(usuario, remember=False)
             next_page = request.args.get("next")
             flash(f"¡Bienvenido, {usuario.nombre}!", "success")
             if usuario.is_admin:
@@ -89,7 +91,7 @@ def logout():
     logout_user()
     session.clear()
     flash("Sesión cerrada correctamente.", "info")
-    return redirect(url_for("main.index"))
+    return redirect(url_for("auth.login"))
 
 
 @auth_bp.route("/recuperar", methods=["GET", "POST"])
@@ -227,7 +229,7 @@ def perfil():
     return render_template("auth/perfil.html")
 
 @auth_bp.after_request
-def add_no_cache_headers(response):
+def add_header(response):
     response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"

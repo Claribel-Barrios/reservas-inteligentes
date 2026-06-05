@@ -10,7 +10,6 @@ login_manager = LoginManager()
 mail = Mail()
 bcrypt = Bcrypt()
 
-
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
@@ -33,6 +32,13 @@ def create_app(config_class=Config):
     app.register_blueprint(reservas_bp, url_prefix="/reservas")
     app.register_blueprint(admin_bp, url_prefix="/admin")
     app.register_blueprint(main_bp)
+
+    @app.after_request
+    def add_header(response):
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, private, max-age=0"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+        return response
 
     with app.app_context():
         db.create_all()
