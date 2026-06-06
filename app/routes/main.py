@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
-from flask_login import current_user
+from flask_login import current_user, login_required
 from flask_mail import Message
 from app import mail
 from app.models import Servicio, Horario, Reserva
@@ -81,4 +81,24 @@ def contacto():
     else:
         flash('Tu mensaje fue recibido. Nos comunicaremos contigo pronto.', 'success')
 
-    return redirect(url_for('main.index') + '#contacto')
+    return redirect(url_for('main.dashboard') + '#contacto')
+
+@main_bp.route("/dashboard")
+@login_required
+def dashboard():
+    reservas = Reserva.query.filter_by(
+        usuario_id=current_user.id
+    ).all()
+
+    return render_template(
+        "main/dashboard.html",
+        reservas=reservas,
+        total_reservas=len(reservas),
+        reservas_confirmadas=sum(1 for r in reservas if r.estado == "confirmada"),
+        reservas_pendientes=sum(1 for r in reservas if r.estado == "pendiente"),
+        reservas_canceladas=sum(1 for r in reservas if r.estado == "cancelada"),
+        proxima_reserva=next(
+            (r for r in reservas if r.estado != "cancelada"),
+            None
+        )
+    )

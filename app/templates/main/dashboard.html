@@ -1,0 +1,384 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block extra_css %}
+
+<style>
+
+.dashboard-container{
+    max-width:1200px;
+    margin:0 auto;
+    padding:2rem 1rem;
+}
+
+.dashboard-header{
+    background:linear-gradient(135deg,#2563eb 0%,#4f46e5 100%);
+    color:white;
+    padding:2rem;
+    border-radius:20px;
+    margin-bottom:2rem;
+    box-shadow:0 15px 35px rgba(0,0,0,.12);
+}
+
+.dashboard-header h1{
+    margin:0;
+    font-size:2rem;
+    font-weight:800;
+}
+
+.dashboard-header p{
+    margin-top:.75rem;
+    opacity:.95;
+}
+
+.stats-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:1rem;
+    margin-bottom:2rem;
+}
+
+.stat-card{
+    background:white;
+    border-radius:18px;
+    padding:1.5rem;
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+    transition:.25s;
+}
+
+.stat-card:hover{
+    transform:translateY(-4px);
+}
+
+.stat-icon{
+    width:60px;
+    height:60px;
+    border-radius:14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:1.4rem;
+    background:rgba(37,99,235,.1);
+    color:#2563eb;
+    margin-bottom:1rem;
+}
+
+.stat-title{
+    color:var(--muted);
+    font-size:.9rem;
+}
+
+.stat-value{
+    font-size:2rem;
+    font-weight:800;
+    color:var(--text);
+}
+
+.content-grid{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:1.5rem;
+}
+
+.card-modern{
+    background:white;
+    border-radius:18px;
+    padding:1.5rem;
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+
+.card-modern h3{
+    margin-top:0;
+    margin-bottom:1rem;
+    display:flex;
+    align-items:center;
+    gap:.6rem;
+}
+
+.reserva-item{
+    border-bottom:1px solid #eee;
+    padding:1rem 0;
+}
+
+.reserva-item:last-child{
+    border-bottom:none;
+}
+
+.estado{
+    padding:.35rem .75rem;
+    border-radius:999px;
+    font-size:.8rem;
+    font-weight:700;
+}
+
+.estado-confirmada{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.estado-pendiente{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.estado-cancelada{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.action-buttons{
+    display:flex;
+    flex-direction:column;
+    gap:.8rem;
+}
+
+.action-btn{
+    display:flex;
+    align-items:center;
+    gap:.8rem;
+    padding:1rem;
+    border-radius:14px;
+    text-decoration:none;
+    color:var(--text);
+    background:#f8fafc;
+    transition:.2s;
+}
+
+.action-btn:hover{
+    background:#eef2ff;
+    transform:translateX(4px);
+}
+
+.action-btn i{
+    color:#2563eb;
+}
+
+.empty-state{
+    text-align:center;
+    padding:2rem;
+    color:var(--muted);
+}
+
+.empty-state i{
+    font-size:3rem;
+    margin-bottom:1rem;
+    color:#cbd5e1;
+}
+
+.next-reserva{
+    background:linear-gradient(
+        135deg,
+        rgba(37,99,235,.08),
+        rgba(79,70,229,.08)
+    );
+    border-radius:16px;
+    padding:1rem;
+}
+
+@media(max-width:900px){
+
+    .content-grid{
+        grid-template-columns:1fr;
+    }
+
+}
+
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+```
+<div class="dashboard-header">
+
+    <h1>
+        <i class="fa-solid fa-hand-sparkles"></i>
+        Hola, {{ current_user.nombre }}
+    </h1>
+
+    <p>
+        Bienvenido a tu panel personal. Administra tus reservas
+        y consulta toda tu actividad desde un solo lugar.
+    </p>
+
+</div>
+
+<div class="stats-grid">
+
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fa-solid fa-calendar-days"></i>
+        </div>
+        <div class="stat-title">Reservas Totales</div>
+        <div class="stat-value">{{ total_reservas }}</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <div class="stat-title">Confirmadas</div>
+        <div class="stat-value">{{ reservas_confirmadas }}</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fa-solid fa-clock"></i>
+        </div>
+        <div class="stat-title">Pendientes</div>
+        <div class="stat-value">{{ reservas_pendientes }}</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fa-solid fa-circle-xmark"></i>
+        </div>
+        <div class="stat-title">Canceladas</div>
+        <div class="stat-value">{{ reservas_canceladas }}</div>
+    </div>
+
+</div>
+
+<div class="content-grid">
+
+    <div class="card-modern">
+
+        <h3>
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            Mis últimas reservas
+        </h3>
+
+        {% if reservas %}
+
+            {% for reserva in reservas[:5] %}
+
+            <div class="reserva-item">
+
+                <strong>
+                    {{ reserva.horario.servicio.nombre }}
+                </strong>
+
+                <br>
+
+                <small>
+                    Código: {{ reserva.codigo }}
+                </small>
+
+                <div style="margin-top:.6rem;">
+
+                    {% if reserva.estado == "confirmada" %}
+                        <span class="estado estado-confirmada">
+                            Confirmada
+                        </span>
+                    {% elif reserva.estado == "pendiente" %}
+                        <span class="estado estado-pendiente">
+                            Pendiente
+                        </span>
+                    {% else %}
+                        <span class="estado estado-cancelada">
+                            Cancelada
+                        </span>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty-state">
+
+                <i class="fa-solid fa-calendar-xmark"></i>
+
+                <p>
+                    Aún no tienes reservas registradas.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:1rem;">
+
+        <div class="card-modern">
+
+            <h3>
+                <i class="fa-solid fa-bolt"></i>
+                Acciones rápidas
+            </h3>
+
+            <div class="action-buttons">
+
+                <a href="{{ url_for('main.servicios') }}" class="action-btn">
+                    <i class="fa-solid fa-plus"></i>
+                    Nueva Reserva
+                </a>
+
+                <a href="{{ url_for('reservas.mis_reservas') }}" class="action-btn">
+                    <i class="fa-solid fa-list-check"></i>
+                    Mis Reservas
+                </a>
+
+                <a href="{{ url_for('auth.perfil') }}" class="action-btn">
+                    <i class="fa-solid fa-user"></i>
+                    Mi Perfil
+                </a>
+
+            </div>
+
+        </div>
+
+        {% if proxima_reserva %}
+
+        <div class="card-modern">
+
+            <h3>
+                <i class="fa-solid fa-location-dot"></i>
+                Próxima Reserva
+            </h3>
+
+            <div class="next-reserva">
+
+                <strong>
+                    {{ proxima_reserva.horario.servicio.nombre }}
+                </strong>
+
+                <p style="margin-top:.6rem;">
+                    Código:
+                    {{ proxima_reserva.codigo }}
+                </p>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+```
+
+</div>
+<script>
+window.addEventListener("pageshow", function(event) {
+
+    if (
+        event.persisted ||
+        performance.getEntriesByType("navigation")[0]?.type === "back_forward"
+    ) {
+        window.location.href = "{{ url_for('auth.login') }}";
+    }
+
+});
+</script>
+
+{% endblock %}

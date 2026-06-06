@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, session
+from flask import Blueprint, app, render_template, redirect, url_for, flash, request, session
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_mail import Message
 from app import mail
@@ -11,8 +11,8 @@ from app.models import Usuario, RecuperacionPassword
 auth_bp = Blueprint("auth", __name__)
 
 
+
 @auth_bp.route("/registro", methods=["GET", "POST"])
-@login_required
 def registro():
     if current_user.is_authenticated:
         return redirect(url_for("main.index"))
@@ -60,13 +60,13 @@ def login():
     error = None
 
     if current_user.is_authenticated:
-        return redirect(url_for("main.index"))
+        return redirect(url_for("main.dashboard"))
 
     if request.method == "POST":
         correo = request.form.get("correo", "").strip().lower()
         password = request.form.get("password", "")
         recordar = request.form.get("recordar") == "on"
-        session.permanent = True
+        session.permanent = False
 
         usuario = Usuario.query.filter_by(correo=correo).first()
 
@@ -77,7 +77,7 @@ def login():
             flash(f"¡Bienvenido, {usuario.nombre}!", "success")
             if usuario.is_admin:
                 return redirect(next_page or url_for("admin.dashboard"))
-            return redirect(next_page or url_for("main.index"))
+            return redirect(next_page or url_for("main.dashboard"))
 
         error = "Correo electrónico o contraseña incorrectos."
         flash("Correo o contraseña incorrectos.", "danger")
@@ -86,7 +86,6 @@ def login():
 
 
 @auth_bp.route("/logout")
-@login_required
 def logout():
     logout_user()
     session.clear()
@@ -228,9 +227,3 @@ def perfil():
 
     return render_template("auth/perfil.html")
 
-@auth_bp.after_request
-def add_header(response):
-    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
-    response.headers["Pragma"] = "no-cache"
-    response.headers["Expires"] = "0"
-    return response

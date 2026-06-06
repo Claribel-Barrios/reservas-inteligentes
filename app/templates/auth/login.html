@@ -50,44 +50,23 @@
 
 {% block scripts %}
 <script>
+window.addEventListener("pageshow", function (event) {
 
-window.addEventListener("pageshow", function () {
+    // 🔥 Detecta si viene del botón atrás (cache bfcache)
+    if (event.persisted || performance.getEntriesByType("navigation")[0].type === "back_forward") {
 
-    const correo = document.querySelector('input[name="correo"]');
-    const password = document.getElementById("password");
-    const recordar = document.querySelector('input[name="recordar"]');
+        const correo = document.querySelector('input[name="correo"]');
+        const password = document.getElementById("password");
+        const recordar = document.querySelector('input[name="recordar"]');
 
-    if (correo) correo.value = "";
-    if (password) password.value = "";
-    if (recordar) recordar.checked = false;
+        if (correo) correo.value = "";
+        if (password) password.value = "";
+        if (recordar) recordar.checked = false;
 
+        // 🔥 Fuerza recarga limpia
+        window.location.reload();
+    }
 
 });
-
-const password = document.getElementById("password");
-const toggle = document.getElementById("togglePassword");
-
-if (password && toggle) {
-
-    toggle.addEventListener("click", () => {
-
-        if (password.type === "password") {
-
-            password.type = "text";
-            toggle.classList.remove("fa-eye");
-            toggle.classList.add("fa-eye-slash");
-
-        } else {
-
-            password.type = "password";
-            toggle.classList.remove("fa-eye-slash");
-            toggle.classList.add("fa-eye");
-
-        }
-
-    });
-
-}
-
 </script>
 {% endblock %}
