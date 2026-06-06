@@ -8,11 +8,6 @@
     <h1>Categorías</h1>
     <p>Selecciona una categoría</p>
 </div>
-<div style="margin-bottom:20px;">
-    <a href="{{ url_for('main.index') }}" class="btn btn-outline">
-        ← Volver al inicio
-    </a>
-</div>
 
 {% if categoria == 'Salud' %}
 <div style="font-size:60px;text-align:center;">🏥</div>
@@ -159,6 +154,5 @@
     color:var(--muted);
 }
 </style>
-
 
 {% endblock %}
