@@ -384,22 +384,29 @@
 
     <div class="nav-links">
 
+        {% if current_user.is_authenticated %}
         <a href="{{ url_for('main.dashboard') }}">
             <i class="fa-solid fa-house"></i>
             Inicio
         </a>
+        {% else %}
+        <a href="{{ url_for('main.index') }}">
+            <i class="fa-solid fa-house"></i>
+            Inicio
+        </a>
+        {% endif %}
 
         <a href="{{ url_for('main.servicios') }}">
             <i class="fa-solid fa-calendar-days"></i>
             Servicios
         </a>
 
-        <a href="#como-funciona">
+        <a href="{{ url_for('main.index') }}#como-funciona">
             <i class="fa-solid fa-circle-info"></i>
             ¿Cómo funciona?
         </a>
 
-        <a href="#contacto">
+        <a href="{{ url_for('main.index') }}#contacto">
             <i class="fa-solid fa-envelope"></i>
             Contacto
         </a>
