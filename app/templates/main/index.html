@@ -620,7 +620,22 @@
 
     <!-- Contact Section -->
     <section class="contact-section" id="contacto">
-
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}"
+                    style="
+                        margin-bottom:20px;
+                        border-radius:16px;
+                        padding:16px 20px;
+                        font-weight:600;
+                    ">
+                    <i class="fa-solid fa-circle-check"></i>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}    
         <div class="contact-header">
 
             <span class="contact-badge">
@@ -638,6 +653,7 @@
             </p>
 
         </div>
+        
 
         <div class="contact-container">
 

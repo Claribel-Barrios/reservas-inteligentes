@@ -370,12 +370,63 @@
             font-size:1.2rem;
         }
 
+        .menu-toggle{
+            display:none;
+            background:none;
+            border:none;
+            font-size:1.4rem;
+            color:var(--primary);
+            cursor:pointer;
+        }
+
+        @media(max-width:768px){
+
+            .menu-toggle{
+                display:block;
+            }
+
+            .nav-links{
+                position:absolute;
+                top:64px;
+                left:0;
+                width:100%;
+                background:white;
+                flex-direction:column;
+                align-items:stretch;
+                padding:1rem;
+                border-bottom:1px solid var(--border);
+                box-shadow:0 10px 20px rgba(0,0,0,.08);
+
+                display:none;
+            }
+
+            .nav-links.show{
+                display:flex;
+            }
+
+            .nav-links a{
+                width:100%;
+                justify-content:flex-start;
+            }
+
+            .user-info{
+                flex-direction:column;
+                align-items:stretch;
+                margin-left:0;
+                margin-top:.5rem;
+            }
+
+        }
+
     </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
 
 <nav>
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fa-solid fa-bars"></i>
+    </button>
 
     <a href="{{ url_for('main.index') }}" class="nav-brand">
         <i class="fa-solid fa-calendar-check"></i>
@@ -454,6 +505,18 @@
         {% endif %}
 
 </nav>
+ {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flashes">   
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
 <main>
     {% block content %}{% endblock %}
 </main>
@@ -463,5 +526,15 @@
 </footer>
 
 {% block scripts %}{% endblock %}
+<script>
+
+const menuToggle = document.getElementById("menuToggle");
+const navLinks = document.querySelector(".nav-links");
+
+menuToggle.addEventListener("click", () => {
+    navLinks.classList.toggle("show");
+});
+
+</script>
 </body>
 </html>

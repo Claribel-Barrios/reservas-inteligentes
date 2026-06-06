@@ -1,48 +1,231 @@
 {% extends "base.html" %}
+
 {% block title %}Mi Perfil{% endblock %}
+
 {% block content %}
+
 <div class="page-header">
-    <h1>Mi Perfil</h1>
-    <p>Actualiza tu información personal</p>
+    <h1>
+        <i class="fa-solid fa-user-gear"></i>
+        Mi Perfil
+    </h1>
+    <p>
+        Administra tu información personal y la seguridad de tu cuenta.
+    </p>
 </div>
 
-<div style="max-width:560px;">
+<div style="max-width:850px;margin:auto;">
+
     <div class="card">
-        <div style="display:flex;align-items:center;gap:1rem;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);">
-            <div style="width:56px;height:56px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;">
+
+        <!-- CABECERA -->
+        <div style="
+            display:flex;
+            align-items:center;
+            gap:1.5rem;
+            padding-bottom:2rem;
+            margin-bottom:2rem;
+            border-bottom:1px solid var(--border);
+            flex-wrap:wrap;
+        ">
+
+            <div style="
+                width:90px;
+                height:90px;
+                border-radius:50%;
+                background:linear-gradient(135deg,#2563eb,#4f46e5);
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                color:white;
+                font-size:2rem;
+                font-weight:700;
+                box-shadow:0 10px 25px rgba(37,99,235,.25);
+            ">
                 {{ current_user.nombre[0].upper() }}
             </div>
+
             <div>
-                <div style="font-weight:700;font-size:1.1rem;">{{ current_user.nombre }}</div>
-                <div style="color:var(--muted);font-size:.875rem;">{{ current_user.correo }}</div>
-                <span class="badge badge-{% if current_user.is_admin %}danger{% else %}primary{% endif %}" style="margin-top:.3rem;">
-                    {{ current_user.rol | capitalize }}
+
+                <h2 style="margin-bottom:.3rem;">
+                    {{ current_user.nombre }}
+                </h2>
+
+                <p style="color:var(--muted);">
+                    {{ current_user.correo }}
+                </p>
+
+                <span class="badge badge-{% if current_user.is_admin %}danger{% else %}primary{% endif %}">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    {{ current_user.rol|capitalize }}
                 </span>
+
             </div>
+
         </div>
 
+        <!-- INFORMACIÓN PERSONAL -->
+
+        <h3 style="
+            margin-bottom:1rem;
+            display:flex;
+            align-items:center;
+            gap:.5rem;
+        ">
+            <i class="fa-solid fa-user"></i>
+            Información Personal
+        </h3>
+
         <form method="POST">
+
             <div class="form-group">
-                <label class="form-label">Nombre completo</label>
-                <input type="text" name="nombre" class="form-control" value="{{ current_user.nombre }}" required>
+
+                <label class="form-label">
+                    Nombre completo
+                </label>
+
+                <input
+                    type="text"
+                    name="nombre"
+                    class="form-control"
+                    value="{{ current_user.nombre }}"
+                    required>
+
             </div>
+
             <div class="form-group">
-                <label class="form-label">Teléfono</label>
-                <input type="tel" name="telefono" class="form-control" value="{{ current_user.telefono or '' }}">
+
+                <label class="form-label">
+                    Correo electrónico
+                </label>
+
+                <input
+                    type="email"
+                    class="form-control"
+                    value="{{ current_user.correo }}"
+                    disabled>
+
             </div>
-            <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border);margin-bottom:1rem;">
-                <p style="font-size:.85rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Cambiar contraseña (opcional)</p>
-            </div>
+
             <div class="form-group">
-                <label class="form-label">Nueva contraseña</label>
-                <input type="password" name="nueva_password" class="form-control" placeholder="Dejar en blanco para no cambiar">
+
+                <label class="form-label">
+                    Teléfono
+                </label>
+
+                <input
+                    type="tel"
+                    name="telefono"
+                    class="form-control"
+                    value="{{ current_user.telefono or '' }}"
+                    placeholder="Ingresa tu número">
+
             </div>
-            <div class="form-group">
-                <label class="form-label">Confirmar contraseña</label>
-                <input type="password" name="confirmar_password" class="form-control" placeholder="Confirmar nueva contraseña">
-            </div>
-            <button type="submit" class="btn btn-primary" style="margin-top:.5rem;">Guardar cambios</button>
+
+            <button
+                type="submit"
+                class="btn btn-primary">
+
+                <i class="fa-solid fa-floppy-disk"></i>
+                Guardar cambios
+
+            </button>
+
         </form>
+
     </div>
+
+    <!-- SEGURIDAD -->
+
+    <div class="card" style="margin-top:1.5rem;">
+
+        <h3 style="
+            margin-bottom:1rem;
+            display:flex;
+            align-items:center;
+            gap:.5rem;
+        ">
+            <i class="fa-solid fa-lock"></i>
+            Seguridad de la Cuenta
+        </h3>
+
+        <p style="
+            color:var(--muted);
+            margin-bottom:1.5rem;
+            line-height:1.7;
+        ">
+            Para proteger tu información, el cambio de contraseña se realiza
+            mediante un enlace seguro enviado a tu correo electrónico.
+        </p>
+
+        <div style="
+            display:flex;
+            gap:1rem;
+            flex-wrap:wrap;
+        ">
+
+            <a
+                href="{{ url_for('auth.recuperar') }}"
+                class="btn btn-outline">
+
+                <i class="fa-solid fa-key"></i>
+                Cambiar contraseña
+
+            </a>
+
+            <a
+                href="{{ url_for('auth.logout') }}"
+                class="btn btn-danger">
+
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Cerrar sesión
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- INFORMACIÓN -->
+
+    <div class="card" style="margin-top:1.5rem;">
+
+        <h3 style="
+            margin-bottom:1rem;
+            display:flex;
+            align-items:center;
+            gap:.5rem;
+        ">
+            <i class="fa-solid fa-circle-info"></i>
+            Información de la Cuenta
+        </h3>
+
+        <div class="grid-2">
+
+            <div>
+                <p style="color:var(--muted);font-size:.85rem;">
+                    Correo registrado
+                </p>
+
+                <strong>
+                    {{ current_user.correo }}
+                </strong>
+            </div>
+
+            <div>
+                <p style="color:var(--muted);font-size:.85rem;">
+                    Tipo de usuario
+                </p>
+
+                <strong>
+                    {{ current_user.rol|capitalize }}
+                </strong>
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
+
 {% endblock %}

@@ -65,7 +65,7 @@ def contacto():
 
     if not nombre or not correo or not mensaje:
         flash('Por favor completa todos los campos del formulario de contacto.', 'warning')
-        return redirect(url_for('main.index') + '#contacto')
+        return redirect(url_for('main.index') + '#contacto')    
 
     contacto_info = f"Nombre: {nombre}\nCorreo: {correo}\nAsunto: {asunto}\n\nMensaje:\n{mensaje}"
     recipient = current_app.config.get('MAIL_DEFAULT_SENDER') or current_app.config.get('MAIL_USERNAME')
@@ -75,13 +75,13 @@ def contacto():
             msg = Message(subject=f"Contacto web: {asunto}", recipients=[recipient])
             msg.body = contacto_info
             mail.send(msg)
-            flash('Gracias por tu mensaje. Nos comunicaremos contigo pronto.', 'success')
+
         except Exception:
             flash('Tu mensaje fue recibido, pero el correo de salida no está disponible en este momento.', 'info')
     else:
         flash('Tu mensaje fue recibido. Nos comunicaremos contigo pronto.', 'success')
 
-    return redirect(url_for('main.dashboard') + '#contacto')
+    return redirect(url_for('main.index') + '#contacto')
 
 @main_bp.route("/dashboard")
 @login_required
